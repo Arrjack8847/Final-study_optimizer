@@ -20,7 +20,7 @@ async function getToken() {
 }
 
 /* =========================================
-   POST HELPER
+   POST HELPER (WITH REAL ERROR DETAILS)
 ========================================= */
 
 async function postJSON(path, body) {
@@ -35,13 +35,29 @@ async function postJSON(path, body) {
     body: JSON.stringify(body),
   });
 
-  const data = await res.json();
+  // Read text first so we can debug even if server didn't return JSON
+  const text = await res.text();
 
-  if (!res.ok) {
-    throw new Error(data?.error || "AI request failed");
+  let data = null;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = null;
   }
 
-  return data;
+  // ✅ Debug logs (remove later if you want)
+  console.log(`✅ ${path} status:`, res.status);
+  console.log(`✅ ${path} response text:`, text);
+
+  if (!res.ok) {
+    const msg =
+      (data && (data.details || data.error)) ||
+      text ||
+      "AI request failed";
+    throw new Error(msg);
+  }
+
+  return data ?? { raw: text };
 }
 
 /* =========================================
@@ -53,7 +69,8 @@ export function aiGeneratePlan(input) {
 }
 
 export function aiGenerateInsights(payload) {
-  return postJSON("/ai/insights", payload);
+  // ✅ backend expects payload or body; this matches your server code
+  return postJSON("/ai/insights", { payload });
 }
 
 export function aiOptimizePlan(payload) {
