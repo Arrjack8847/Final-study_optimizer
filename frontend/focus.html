@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Study Burnout & Productivity Optimizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: hsl(38, 44%, 90%);
+      --fg: hsl(30, 20%, 15%);
+      --card: hsl(38, 30%, 82%);
+      --primary: hsl(30, 25%, 28%);
+      --primary-fg: hsl(38, 44%, 92%);
+      --secondary: hsl(38, 35%, 75%);
+      --muted: hsl(30, 12%, 40%);
+      --border: hsl(30, 20%, 70%);
+      --accent: hsl(85, 25%, 35%);
+      --accent-fg: hsl(85, 20%, 95%);
+      --nav-bg: hsl(40, 50%, 88%);
+      --radius: 0.75rem;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(0,0,0,0.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      text-decoration: none; color: var(--fg);
+      font-size: 0.875rem; font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+
+    /* Main content */
+    main {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: calc(100vh - 72px); padding: 2rem;
+    }
+
+    /* Task dropdown */
+    .task-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
+    .task-input {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem; font-weight: 700;
+      background: transparent; border: none;
+      border-bottom: 2px solid var(--primary);
+      outline: none; color: var(--fg); text-align: center;
+      width: 360px;
+    }
+
+    /* Mode buttons */
+    .modes { display: flex; gap: 0.75rem; margin-bottom: 2.5rem; }
+    .mode-btn {
+      padding: 0.5rem 1.25rem; border-radius: var(--radius);
+      font-size: 0.875rem; font-weight: 600;
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--fg); cursor: pointer; transition: all 0.2s;
+    }
+    .mode-btn:hover { background: var(--secondary); }
+    .mode-btn.active {
+      background: var(--primary); color: var(--primary-fg);
+      border-color: var(--primary);
+    }
+
+    /* Timer display */
+    .timer-display {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 900; letter-spacing: -0.02em;
+      margin-bottom: 2.5rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .timer-display.running { animation: pulse-gentle 1.5s ease-in-out infinite; }
+
+    @keyframes pulse-gentle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Controls */
+    .controls { display: flex; align-items: center; gap: 1rem; }
+    .start-btn {
+      padding: 0.75rem 2rem; border-radius: var(--radius);
+      font-size: 0.875rem; font-weight: 700;
+      background: var(--accent); color: var(--accent-fg);
+      border: none; cursor: pointer; min-width: 120px;
+      transition: opacity 0.2s;
+    }
+    .start-btn:hover { opacity: 0.9; }
+    .reset-btn {
+      width: 48px; height: 48px; border-radius: var(--radius);
+      background: var(--card); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; color: var(--fg); transition: background 0.2s;
+    }
+    .reset-btn:hover { background: var(--secondary); }
+    .reset-btn svg { width: 20px; height: 20px; }
+
+    /* AI Chat Section */
+    .chat-section {
+      width: 100%; max-width: 700px; margin: 0 auto;
+      padding: 3rem 2rem 2rem;
+    }
+    .chat-header { margin-bottom: 1.5rem; }
+    .chat-greeting {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.875rem; font-weight: 600; color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .chat-greeting .sparkle { font-size: 1.25rem; }
+    .chat-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700;
+    }
+    .chat-messages {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem;
+      min-height: 200px; max-height: 400px;
+      overflow-y: auto; margin-bottom: 1rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .msg { max-width: 85%; line-height: 1.5; font-size: 0.875rem; }
+    .msg.assistant {
+      background: rgba(0,0,0,0.06); padding: 0.75rem 1rem;
+      border-radius: var(--radius); align-self: flex-start;
+    }
+    .msg.user {
+      background: var(--primary); color: var(--primary-fg);
+      padding: 0.75rem 1rem; border-radius: var(--radius);
+      align-self: flex-end;
+    }
+    .msg.assistant .sparkle { margin-bottom: 0.25rem; display: block; }
+    .chat-input-row {
+      display: flex; gap: 0.5rem; align-items: center;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.5rem 0.75rem;
+    }
+    .chat-input-row input {
+      flex: 1; background: transparent; border: none; outline: none;
+      font-size: 0.875rem; color: var(--fg); font-family: 'Inter', sans-serif;
+    }
+    .chat-input-row input::placeholder { color: var(--muted); }
+    .send-btn {
+      width: 40px; height: 40px; border-radius: 0.5rem;
+      background: var(--primary); color: var(--primary-fg);
+      border: none; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: opacity 0.2s;
+    }
+    .send-btn:hover { opacity: 0.85; }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .send-btn svg { width: 18px; height: 18px; }
+
+    .divider { width: 100%; max-width: 700px; margin: 0 auto; border: none; border-top: 1px solid var(--border); }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(160deg, #2d3a2e, #1e2820);
+      color: #a8b5a0;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 40px;
+    }
+    .footer-col h4 {
+      color: #f5f0e8;
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      margin-bottom: 20px;
+    }
+    .footer-col p { font-size: 13px; color: #8a9e7a; line-height: 1.8; }
+    .footer-col a {
+      font-size: 13px;
+      color: #8a9e7a;
+      text-decoration: none;
+      line-height: 2.2;
+      display: block;
+      transition: all 0.2s;
+    }
+    .footer-col a:hover { color: #f5f0e8; transform: translateX(4px); }
+    .footer-social { display: flex; gap: 12px; margin-top: 16px; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid rgba(245, 240, 232, 0.15);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #a8b5a0;
+      transition: all 0.3s;
+    }
+    .footer-social a:hover {
+      background: #4a5d23; border-color: #4a5d23;
+      color: white; transform: translateY(-2px);
+    }
+    .footer-bottom {
+      text-align: center;
+      padding: 24px 60px;
+      font-size: 13px;
+      color: #5a6b50;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .footer-content { grid-template-columns: 1fr 1fr; padding: 40px 28px; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 0.75rem 1rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links a { font-size: 0.75rem; }
+      .modes { flex-wrap: wrap; justify-content: center; }
+      .chat-section { padding: 2rem 1rem; }
+      .footer-content { grid-template-columns: 1fr; }
+      .task-input { width: 100%; max-width: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-icon">🧠</div>
+      <div class="nav-title">AI Study Burnout &<br/>Productivity Optimizer</div>
+    </div>
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="#">About Us</a>
+      <a href="#">Services</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ✅ Task dropdown -->
+    <div class="task-row" id="taskRow" style="flex-direction:column; align-items:center; gap:0.75rem;">
+      <select id="taskSelect" class="task-input" style="text-align-last:center;">
+        <option>Loading tasks...</option>
+      </select>
+    </div>
+
+    <div class="modes" id="modes">
+      <button class="mode-btn active" data-mode="pomodoro">Pomodoro</button>
+      <button class="mode-btn" data-mode="short">Short Break</button>
+      <button class="mode-btn" data-mode="long">Long Break</button>
+    </div>
+
+    <div class="timer-display" id="timerDisplay">25:00</div>
+
+    <div class="controls">
+      <button class="start-btn" id="startBtn">Start</button>
+      <button class="reset-btn" id="resetBtn" title="Reset">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+          <path d="M21 3v5h-5"/>
+        </svg>
+      </button>
+    </div>
+  </main>
+
+  <hr class="divider" />
+
+  <section class="chat-section">
+    <div class="chat-header">
+      <div class="chat-greeting"><span class="sparkle">✦</span> Hi User</div>
+      <div class="chat-title">Where Should We Start?</div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg assistant">
+        <span class="sparkle">✦</span>
+        Hi! I'm your AI study assistant powered by Gemini. Ask me anything about study techniques, time management, or how to reduce burnout!
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask Gemini…" />
+      <button class="send-btn" id="sendBtn" title="Send">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <script type="module">
+    import { watchAuth, auth } from "./firebase.js";
+    import { getActivePlanWithTasks, startSession, endSession, cancelSession, getBurnoutScore } from "./api.js";
+
+    /* =========================
+       AI CHAT (REAL GEMINI via Render)
+    ========================== */
+    const CHAT_API_BASE =
+      window.location.hostname === "localhost"
+        ? "http://localhost:5055"
+        : "https://study-optimizer-ai.onrender.com";
+
+    async function getToken() {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Not logged in");
+      return await user.getIdToken();
+    }
+
+    /* =========================
+       TIMER + SESSION STATE
+    ========================== */
+    const BREAKS = { short: 5 * 60, long: 15 * 60 };
+    let DURATIONS = { pomodoro: 25 * 60, short: BREAKS.short, long: BREAKS.long };
+    const LS_KEY = "activeFocusSession";
+
+    let mode = "pomodoro";
+    let timeLeft = DURATIONS.pomodoro;
+    let running = false;
+    let intervalId = null;
+
+    let activePlanId = null;
+    let activeTaskId = null;
+
+    let currentSessionId = null;
+    let sessionStartedAtMs = null;
+
+    // UI
+    const timerDisplay = document.getElementById("timerDisplay");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const modeBtns = document.querySelectorAll(".mode-btn");
+    const taskSelect = document.getElementById("taskSelect");
+
+    function formatTime(s) {
+      const m = String(Math.floor(s / 60)).padStart(2, "0");
+      const sec = String(s % 60).padStart(2, "0");
+      return m + ":" + sec;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function setPomodoroFromTaskMinutes(taskMinutes) {
+      const mins = clamp(Number(taskMinutes) || 25, 5, 180); // 5–180 min safety cap
+      DURATIONS.pomodoro = mins * 60;
+
+      // Only reset timer if not running
+      if (!running) {
+        timeLeft = DURATIONS[mode];
+        render();
+      }
+    }
+
+    function render() {
+      timerDisplay.textContent = formatTime(timeLeft);
+      timerDisplay.classList.toggle("running", running);
+
+      if (running) startBtn.textContent = "Pause";
+      else if (timeLeft < DURATIONS[mode] && timeLeft > 0) startBtn.textContent = "Resume";
+      else startBtn.textContent = "Start";
+    }
+
+    function stopTicking() {
+      running = false;
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+
+    function saveActiveSession() {
+      if (!currentSessionId || !sessionStartedAtMs) return;
+      localStorage.setItem(
+        LS_KEY,
+        JSON.stringify({
+          sessionId: currentSessionId,
+          startedAtMs: sessionStartedAtMs,
+          mode,
+          baseSeconds: DURATIONS[mode],
+          planId: activePlanId,
+          taskId: activeTaskId,
+        })
+      );
+    }
+
+    function clearActiveSession() {
+      localStorage.removeItem(LS_KEY);
+    }
+
+    async function recoverActiveSessionIfAny() {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return;
+
+      try {
+        const s = JSON.parse(raw);
+        currentSessionId = s.sessionId || null;
+        sessionStartedAtMs = s.startedAtMs || null;
+        mode = s.mode || "pomodoro";
+        activePlanId = s.planId ?? activePlanId;
+        activeTaskId = s.taskId ?? activeTaskId;
+
+        // restore active UI mode
+        modeBtns.forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+
+        // restore timer timeLeft
+        const base = Number(s.baseSeconds) || DURATIONS[mode];
+        const elapsed = sessionStartedAtMs ? Math.floor((Date.now() - sessionStartedAtMs) / 1000) : 0;
+        timeLeft = Math.max(0, base - elapsed);
+
+        // restore dropdown selection if exists
+        if (taskSelect && activeTaskId) taskSelect.value = activeTaskId;
+
+        // if finished while page closed, end it
+        if (timeLeft === 0 && currentSessionId) {
+          const durationMinutes =
+            sessionStartedAtMs
+              ? Math.round(((Date.now() - sessionStartedAtMs) / 60000) * 100) / 100
+              : 0;
+
+          await endSession(currentSessionId, { durationMinutes, status: "completed" }).catch(console.error);
+
+          currentSessionId = null;
+          sessionStartedAtMs = null;
+          clearActiveSession();
+          render();
+          return;
+        }
+
+        // resume ticking automatically
+        running = true;
+        intervalId = setInterval(tick, 1000);
+        render();
+      } catch {
+        clearActiveSession();
+      }
+    }
+
+    async function finalizeSessionCompleted() {
+      if (!currentSessionId) return;
+
+      const durationMinutes =
+        sessionStartedAtMs
+          ? Math.round(((Date.now() - sessionStartedAtMs) / 60000) * 100) / 100
+          : 0;
+
+      await endSession(currentSessionId, { durationMinutes, status: "completed" }).catch(console.error);
+
+      currentSessionId = null;
+      sessionStartedAtMs = null;
+      clearActiveSession();
+    }
+
+    function tick() {
+      if (timeLeft <= 1) {
+        timeLeft = 0;
+        stopTicking();
+        render();
+
+        if (mode === "pomodoro") {
+          finalizeSessionCompleted().catch(console.error);
+        }
+        return;
+      }
+
+      timeLeft--;
+      saveActiveSession();
+      render();
+    }
+
+    /* =========================
+       START / PAUSE
+    ========================== */
+    startBtn.addEventListener("click", async () => {
+      // Pause (do NOT end session)
+      if (running) {
+        stopTicking();
+        render();
+        return;
+      }
+
+      // Starting/Resuming
+      if (timeLeft === 0) timeLeft = DURATIONS[mode];
+      running = true;
+
+      // Only create a Firestore session for Pomodoro
+      if (mode === "pomodoro" && !currentSessionId) {
+        try {
+          const { id } = await startSession({
+            planId: activePlanId,
+            taskId: activeTaskId,
+            mode,
+          });
+          currentSessionId = id;
+          sessionStartedAtMs = Date.now();
+          saveActiveSession();
+          console.log("✅ session created:", id);
+        } catch (e) {
+          console.error("❌ startSession failed:", e);
+          alert("startSession failed: " + (e?.message || e));
+          stopTicking();
+          timeLeft = DURATIONS[mode];
+          render();
+          return;
+        }
+      }
+
+      intervalId = setInterval(tick, 1000);
+      render();
+    });
+
+    /* =========================
+       RESET
+    ========================== */
+    resetBtn.addEventListener("click", async () => {
+      if (currentSessionId) {
+        await cancelSession(currentSessionId).catch(console.error);
+        currentSessionId = null;
+        sessionStartedAtMs = null;
+        clearActiveSession();
+      }
+
+      stopTicking();
+      timeLeft = DURATIONS[mode];
+      render();
+    });
+
+    /* =========================
+       MODE SWITCH
+    ========================== */
+    modeBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const nextMode = btn.dataset.mode;
+        if (!nextMode) return;
+
+        // block switching while running
+        if (running) return;
+
+        mode = nextMode;
+        timeLeft = DURATIONS[mode];
+
+        modeBtns.forEach((b) => b.classList.toggle("active", b === btn));
+
+        // switching away from pomodoro cancels any unfinished session
+        if (mode !== "pomodoro" && currentSessionId) {
+          await cancelSession(currentSessionId).catch(console.error);
+          currentSessionId = null;
+          sessionStartedAtMs = null;
+          clearActiveSession();
+        }
+
+        render();
+      });
+    });
+
+    /* =========================
+       TASK PICKER (REAL)
+    ========================== */
+    function fillTaskDropdown(tasks, selectedId = null) {
+      if (!taskSelect) return;
+
+      taskSelect.innerHTML = "";
+      const items = tasks || [];
+
+      if (!items.length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "No tasks found";
+        taskSelect.appendChild(opt);
+        taskSelect.disabled = true;
+        return;
+      }
+
+      taskSelect.disabled = false;
+
+      items.forEach((t) => {
+        const opt = document.createElement("option");
+        opt.value = t.id;
+
+        const mins = Number(t.plannedMinutes) || 25;
+        const done = t.done ? "✅ " : "";
+        const star = selectedId && t.id === selectedId ? "⭐ " : "";
+
+        opt.textContent = `${star}${done}${t.title || "Untitled Task"} — ${mins} min`;
+        taskSelect.appendChild(opt);
+      });
+
+      // ✅ Select recommended/selectedId if valid
+      if (selectedId && items.some((t) => t.id === selectedId)) {
+        activeTaskId = selectedId;
+        taskSelect.value = selectedId;
+        return;
+      }
+
+      // ✅ Else keep previously selected task if valid
+      if (activeTaskId && items.some((t) => t.id === activeTaskId)) {
+        taskSelect.value = activeTaskId;
+        return;
+      }
+
+      // ✅ Else fallback to first task
+      activeTaskId = items[0].id;
+      taskSelect.value = activeTaskId;
+    }
+
+    async function applyPomodoroForTask(taskId) {
+      const list = window.__tasks || [];
+      const t = list.find((x) => x.id === taskId);
+
+      if (!t) {
+        console.warn("Task not found for applyPomodoroForTask:", taskId);
+        return;
+      }
+
+      const baseMinutes = Number(t.plannedMinutes ?? 25) || 25;
+
+      let scale = 1.0;
+      let burnoutScore = 0;
+
+      try {
+        const burnout = await getBurnoutScore();
+        burnoutScore = burnout?.score ?? 0;
+
+        // Adaptive scaling
+        if (burnoutScore > 60) scale = 0.6;
+        else if (burnoutScore > 30) scale = 0.8;
+        else scale = 1.0;
+
+      } catch (e) {
+        console.warn("getBurnoutScore failed:", e?.message || e);
+      }
+
+      const finalMinutes = Math.max(5, Math.round(baseMinutes * scale));
+
+      setPomodoroFromTaskMinutes(finalMinutes);
+
+      console.log(
+        `🧠 Task: ${t.title} | Base: ${baseMinutes} min | Burnout: ${burnoutScore} | Final: ${finalMinutes} min`
+      );
+    }
+
+    if (taskSelect) {
+      taskSelect.addEventListener("change", async () => {
+        // block changing task while session is running
+        if (running) {
+          taskSelect.value = activeTaskId || "";
+          return;
+        }
+
+        activeTaskId = taskSelect.value || null;
+        if (!activeTaskId) return;
+
+        await applyPomodoroForTask(activeTaskId);
+      });
+    }
+
+    /* =========================
+       LOAD ACTIVE PLAN + TASKS
+    ========================== */
+    async function pickRecommendedTask(tasks) {
+      const list = tasks || [];
+      if (!list.length) return null;
+
+      // get burnout score (safe default)
+      const burnout = await getBurnoutScore().catch(() => ({ score: 0 }));
+
+      const candidates = list.filter(t => !t.done);
+      const base = candidates.length ? candidates : list; // if all done, fall back to any
+
+      let best = null;
+      let bestScore = -Infinity;
+
+      for (const t of base) {
+        const priority = Number(t.priority) || 1;
+        const mins = Number(t.plannedMinutes) || 25;
+
+        let score = 0;
+
+        // prefer unfinished
+        if (!t.done) score += 50;
+
+        // priority boost
+        score += priority * 10;
+
+        // burnout-based duration preference
+        if (burnout.score > 60) {
+          // burnout high → prefer short tasks
+          score += mins <= 25 ? 15 : -10;
+        } else if (burnout.score > 30) {
+          // fatigued → slightly prefer medium
+          score += mins <= 35 ? 10 : -5;
+        } else {
+          // healthy → allow longer tasks
+          score += mins >= 30 ? 10 : 0;
+        }
+
+        if (score > bestScore) {
+          bestScore = score;
+          best = t;
+        }
+      }
+
+      return best;
+    }
+
+    async function initActivePlanAndTask() {
+      try {
+        const { plan, tasks } = await getActivePlanWithTasks();
+        activePlanId = plan?.id || null;
+
+        const list = tasks || [];
+        window.__tasks = list; // keep tasks accessible for dropdown changes
+
+        // ✅ pick recommended task instead of first task
+        const recommended = await pickRecommendedTask(list);
+        activeTaskId = recommended?.id || list[0]?.id || null;
+
+        // fill dropdown AFTER we know activeTaskId (so it can show selected)
+        fillTaskDropdown(list, activeTaskId);
+
+        if (activeTaskId) {
+          await applyPomodoroForTask(activeTaskId); // keeps your logic (task time + burnout)
+        }
+      } catch (e) {
+        console.error("initActivePlanAndTask error:", e);
+      }
+    }
+
+    /* =========================
+       AUTH INIT
+    ========================== */
+    render();
+
+    watchAuth(async (user) => {
+      if (!user) {
+        window.location.replace("first.html");
+        return;
+      }
+
+      try {
+        const { plan } = await getActivePlanWithTasks();
+        if (!plan) {
+          window.location.replace("home.html");
+          return;
+        }
+
+        await initActivePlanAndTask();
+        await recoverActiveSessionIfAny();
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    /* =========================
+       AI CHAT (REAL)
+    ========================== */
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendBtn");
+    let chatHistory = [];
+    let isSending = false;
+
+    function addMsg(role, text) {
+      const d = document.createElement("div");
+      d.className = "msg " + role;
+      if (role === "assistant") d.innerHTML = '<span class="sparkle">✦</span> ' + text;
+      else d.textContent = text;
+      chatMessages.appendChild(d);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return d;
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text || isSending) return;
+
+      isSending = true;
+      sendBtn.disabled = true;
+      chatInput.value = "";
+
+      addMsg("user", text);
+      chatHistory.push({ role: "user", content: text });
+
+      const assistantEl = addMsg("assistant", "Typing...");
+
+      try {
+        const token = await getToken();
+
+        const resp = await fetch(`${CHAT_API_BASE}/ai/chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ messages: chatHistory }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data?.error || "Chat request failed");
+
+        const reply = (data?.reply || "").trim() || "Sorry, I couldn't generate a response.";
+        assistantEl.innerHTML = '<span class="sparkle">✦</span> ' + reply;
+        chatHistory.push({ role: "assistant", content: reply });
+      } catch (e) {
+        assistantEl.innerHTML = '<span class="sparkle">✦</span> Error: ' + (e?.message || e);
+      }
+
+      isSending = false;
+      sendBtn.disabled = false;
+      chatInput.focus();
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+
+  <footer id="contact">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>AI Study Optimizer</h4>
+        <p>Your AI-powered study companion to beat burnout and boost productivity. Built by Team Arr Jack at Sunway College.</p>
+        <div class="footer-social">
+          <a href="#" title="X / Twitter">𝕏</a>
+          <a href="#" title="LinkedIn">in</a>
+          <a href="#" title="Instagram">📷</a>
+          <a href="#" title="GitHub">⌨</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="home.html">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p>📍 Sunway College, Malaysia</p>
+        <p>👥 Team Arr Jack</p>
+        <p>📧 <a href="mailto:smks8847@gmail.com" style="display:inline; color:#8a9e7a; text-decoration:none;">smks8847@gmail.com</a></p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; 2026 AI Study Burnout &amp; Productivity Optimizer — Team Arr Jack (Sunway College).
+    </div>
+  </footer>
+</body>
+</html>

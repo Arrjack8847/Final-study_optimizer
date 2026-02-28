@@ -1,0 +1,1548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠AI Study Burnout & Productivity Optimizer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f0e8;
+      color: #2d3a2e;
+      overflow-x: hidden;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== HEADER / NAV ===== */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 60px;
+      background: rgba(245, 240, 232, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: box-shadow 0.3s, padding 0.3s;
+    }
+
+    header.scrolled {
+      box-shadow: 0 2px 24px rgba(45, 58, 46, 0.08);
+      padding: 12px 60px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #4a5d23;
+      max-width: 200px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .logo:hover { color: #2d3a2e; }
+
+    nav { display: flex; gap: 36px; align-items: center; }
+
+    nav a {
+      text-decoration: none;
+      color: #2d3a2e;
+      font-size: 15px;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #4a5d23;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover { color: #4a5d23; }
+    nav a:hover::after { width: 100%; }
+    nav a.active { color: #4a5d23; }
+    nav a.active::after { width: 100%; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 200;
+    }
+
+    .hamburger span {
+      width: 26px;
+      height: 2.5px;
+      background: #2d3a2e;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* ===== SEARCH BAR ===== */
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      padding: 16px 60px;
+      animation: fadeIn 0.8s ease 0.2s both;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 360px;
+    }
+
+    .search-wrapper svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: #8a7e6b;
+      transition: color 0.2s;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 12px 20px 12px 44px;
+      border: 1.5px solid #c9b896;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.5);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: #2d3a2e;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .search-bar input::placeholder { color: #8a7e6b; }
+    .search-bar input:focus {
+      border-color: #4a5d23;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 0 0 4px rgba(74, 93, 35, 0.08);
+    }
+    .search-bar input:focus + svg,
+    .search-wrapper:focus-within svg { color: #4a5d23; }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 50px 60px 80px;
+      gap: 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .hero-text {
+      max-width: 520px;
+      animation: slideInLeft 0.8s ease 0.3s both;
+    }
+
+    .hero-text .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(74, 93, 35, 0.1);
+      color: #4a5d23;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: #2d3a2e;
+      margin-bottom: 16px;
+      line-height: 1.2;
+      font-style: italic;
+    }
+
+    .hero-text p {
+      font-size: 16px;
+      color: #5a6558;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #2d3a2e, #3d4e3e);
+      color: #f5f0e8;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 16px rgba(45, 58, 46, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(45, 58, 46, 0.35);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-primary svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.3s;
+    }
+
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .hero-visual {
+      animation: slideInRight 0.8s ease 0.4s both;
+      position: relative;
+    }
+
+    .hero-card {
+      width: 340px;
+      height: 260px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #c9b896, #a89060);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      box-shadow: 0 20px 50px rgba(168, 144, 96, 0.3);
+      animation: float 4s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      border-radius: 24px;
+    }
+
+    .hero-floating-tag {
+      position: absolute;
+      background: white;
+      border-radius: 12px;
+      padding: 10px 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .hero-floating-tag.tag-1 {
+      top: -20px;
+      right: -30px;
+      animation-delay: -1s;
+    }
+
+    .hero-floating-tag.tag-2 {
+      bottom: -16px;
+      left: -20px;
+      animation-delay: -2s;
+    }
+
+    .tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .tag-dot.green { background: #4a5d23; }
+    .tag-dot.amber { background: #c9a832; }
+
+    /* ===== COURSES SECTION ===== */
+    .courses {
+      padding: 80px 60px;
+      text-align: center;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(74, 93, 35, 0.08);
+      color: #4a5d23;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .courses h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #2d3a2e;
+    }
+
+    .courses .subtitle {
+      font-size: 16px;
+      color: #6b7a60;
+      margin-bottom: 48px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .courses-grid {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .course-card {
+      width: 280px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      cursor: pointer;
+    }
+
+    .course-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+    }
+
+    .course-card-img {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-card:nth-child(1) .course-card-img {
+      background: linear-gradient(145deg, #c9b896, #b5a278);
+    }
+    .course-card:nth-child(2) .course-card-img {
+      background: linear-gradient(145deg, #8a9e6b, #6b8a50);
+    }
+    .course-card:nth-child(3) .course-card-img {
+      background: linear-gradient(145deg, #a89078, #8a7060);
+    }
+
+    .course-card-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.08));
+    }
+
+    .course-card-body {
+      padding: 24px;
+    }
+
+    .course-card-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      display: inline-block;
+      padding: 6px 20px;
+      border: 1.5px solid #2d3a2e;
+      border-radius: 24px;
+      margin-bottom: 14px;
+      transition: all 0.3s;
+    }
+
+    .course-card:hover .course-card-body h3 {
+      background: #2d3a2e;
+      color: #f5f0e8;
+    }
+
+    .course-card-body p {
+      font-size: 13px;
+      color: #6b6b6b;
+      line-height: 1.6;
+    }
+
+    /* ===== DASHBOARD SECTION ===== */
+    .dashboard-section {
+      background: linear-gradient(160deg, #2d3a2e, #1e2820);
+      color: #f5f0e8;
+      padding: 80px 60px;
+      display: flex;
+      gap: 60px;
+      align-items: center;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-section::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(74, 93, 35, 0.15), transparent);
+      border-radius: 50%;
+    }
+
+    .dashboard-left {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-left-img {
+      width: 100%;
+      max-width: 340px;
+      height: 220px;
+      background: linear-gradient(145deg, #4a5d23, #3d4e3e);
+      border-radius: 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-left-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
+    }
+
+    .dashboard-left h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .dashboard-left .sub-text {
+      font-size: 14px;
+      color: #a8b5a0;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: 1.5px solid rgba(245, 240, 232, 0.4);
+      color: #f5f0e8;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.3s;
+    }
+
+    .btn-outline:hover {
+      background: #f5f0e8;
+      color: #2d3a2e;
+      border-color: #f5f0e8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(245, 240, 232, 0.2);
+    }
+
+    .btn-outline svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s;
+    }
+
+    .btn-outline:hover svg { transform: translateX(4px); }
+
+    .dashboard-right {
+      flex: 1.3;
+      min-width: 340px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-right h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 22px;
+      transition: all 0.3s;
+      cursor: default;
+    }
+
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .stat-card .stat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card:nth-child(1) .stat-icon { background: rgba(74, 93, 35, 0.3); }
+    .stat-card:nth-child(2) .stat-icon { background: rgba(201, 168, 50, 0.2); }
+    .stat-card:nth-child(3) .stat-icon { background: rgba(168, 96, 60, 0.2); }
+
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: #8a9e7a;
+      margin-bottom: 6px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .stat-card .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .stat-card .stat-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .stat-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 1.5s ease;
+    }
+
+    .stat-card:nth-child(1) .stat-bar-fill { background: #4a5d23; }
+    .stat-card:nth-child(2) .stat-bar-fill { background: #c9a832; }
+    .stat-card:nth-child(3) .stat-bar-fill { background: #a8603c; }
+
+    .stat-card .stat-percent {
+      font-size: 12px;
+      color: #6b7a60;
+    }
+
+    .stats-row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .stats-row-2 .stat-card:nth-child(1) .stat-icon { background: rgba(100, 140, 200, 0.2); }
+    .stats-row-2 .stat-card:nth-child(2) .stat-icon { background: rgba(180, 120, 200, 0.2); }
+    .stats-row-2 .stat-card:nth-child(1) .stat-bar-fill { background: #648cc8; }
+    .stats-row-2 .stat-card:nth-child(2) .stat-bar-fill { background: #b478c8; }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials {
+      padding: 80px 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .testimonials h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 600;
+      margin-bottom: 48px;
+    }
+
+    .testimonials-grid {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .testimonial-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 340px;
+      text-align: left;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+    }
+
+    .testimonial-card .quote-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      color: #4a5d23;
+      opacity: 0.3;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .testimonial-card p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #5a6558;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .testimonial-avatar.t1 { background: linear-gradient(135deg, #4a5d23, #6b8a50); }
+    .testimonial-avatar.t2 { background: linear-gradient(135deg, #a89060, #c9b896); }
+    .testimonial-avatar.t3 { background: linear-gradient(135deg, #648cc8, #4a6ea8); }
+
+    .testimonial-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3a2e;
+    }
+
+    .testimonial-role {
+      font-size: 12px;
+      color: #8a7e6b;
+    }
+
+    .stars {
+      color: #c9a832;
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      padding: 80px 60px;
+      text-align: center;
+    }
+
+    .cta-box {
+      max-width: 700px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, #2d3a2e, #3d4e3e);
+      border-radius: 28px;
+      padding: 60px 48px;
+      color: #f5f0e8;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(74, 93, 35, 0.3), transparent);
+      border-radius: 50%;
+    }
+
+    .cta-box::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: -80px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(201, 184, 150, 0.1), transparent);
+      border-radius: 50%;
+    }
+
+    .cta-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-box p {
+      font-size: 16px;
+      color: #a8b5a0;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 36px;
+      background: #f5f0e8;
+      color: #2d3a2e;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-light:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(245, 240, 232, 0.3);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: linear-gradient(160deg, #2d3a2e, #1e2820);
+      color: #a8b5a0;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+
+    .footer-col h4 {
+      color: #f5f0e8;
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      margin-bottom: 20px;
+    }
+
+    .footer-col p {
+      font-size: 13px;
+      color: #8a9e7a;
+      line-height: 1.8;
+    }
+
+    .footer-col a {
+      font-size: 13px;
+      color: #8a9e7a;
+      text-decoration: none;
+      line-height: 2.2;
+      display: block;
+      transition: all 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: #f5f0e8;
+      transform: translateX(4px);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(245, 240, 232, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #a8b5a0;
+      transition: all 0.3s;
+    }
+
+    .footer-social a:hover {
+      background: #4a5d23;
+      border-color: #4a5d23;
+      color: white;
+      transform: translateY(-2px) translateX(0);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding: 24px 60px;
+      font-size: 13px;
+      color: #5a6b50;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ===== BACK TO TOP ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #2d3a2e, #3d4e3e);
+      color: #f5f0e8;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 99;
+      box-shadow: 0 4px 16px rgba(45, 58, 46, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(45, 58, 46, 0.4);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      header { padding: 16px 28px; }
+      header.scrolled { padding: 12px 28px; }
+
+      .hamburger { display: flex; }
+
+      nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 260px;
+        height: 100vh;
+        background: #f5f0e8;
+        flex-direction: column;
+        padding: 80px 40px;
+        gap: 24px;
+        transition: right 0.4s ease;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+        z-index: 150;
+      }
+
+      nav.open { right: 0; }
+
+      nav a { font-size: 18px; }
+
+      .hero {
+        flex-direction: column;
+        padding: 32px 28px 60px;
+        text-align: center;
+      }
+
+      .hero-text { animation-name: fadeUp; }
+      .hero-text h1 { font-size: 32px; }
+      .hero-card { width: 280px; height: 200px; }
+
+      .courses { padding: 60px 28px; }
+      .courses h2 { font-size: 28px; }
+
+      .dashboard-section {
+        flex-direction: column;
+        padding: 60px 28px;
+      }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .testimonials { padding: 60px 28px; }
+
+      .cta-section { padding: 40px 28px; }
+      .cta-box { padding: 40px 28px; }
+      .cta-box h2 { font-size: 26px; }
+
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+        padding: 40px 28px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .stats-row-2 { grid-template-columns: 1fr; }
+      .footer-content { grid-template-columns: 1fr; }
+      .courses-grid { gap: 20px; }
+      .course-card { width: 100%; max-width: 320px; }
+    }
+
+    /* Overlay */
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 140;
+    }
+
+    .nav-overlay.open { display: block; }
+
+.course-card {
+  display: block; /* ensures the link fills the card */
+  text-decoration: none; /* removes default link underline */
+  color: inherit; /* keeps text color as normal */
+}
+
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">🧠AI Study Burnout &amp; Productivity Optimizer</div>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+    <nav id="nav">
+  <a href="home.html" class="active">Home</a>
+  <a href="#about">About Us</a>
+  <a href="#services">Services</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- ✅ ADD THIS -->
+<button id="logoutBtn" style="
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(45,58,46,0.15);
+  background: rgba(245,240,232,0.7);
+  color: #2d3a2e;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+">
+  Logout
+</button>
+
+<div class="nav-overlay" id="navOverlay" onclick="toggleNav()"></div>
+  </header>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <input type="text" placeholder="Search courses, topics..." id="searchInput">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <span class="badge">✨ AI-Powered Learning</span>
+      <h1>Let's personalize your experience</h1>
+      <p>Share your study habits with us, and we'll create a personalized experience to help you stay focused, organized, and burnout-free.</p>
+      <a href="#services" class="btn-primary">
+        Get started
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+    <div class="hero-visual">
+     <div class="hero-card">
+  <img src="https://images.stockcake.com/public/0/b/c/0bc3b410-9168-48ff-89a5-70964c9d8aca_large/nighttime-study-session-stockcake.jpg" alt="Study dashboard">
+</div>
+      <div class="hero-floating-tag tag-1">
+  <span class="tag-dot green"></span>
+  <span id="focusModeText">Focus Mode Off</span>
+</div>
+      <div class="hero-floating-tag tag-2">
+  <span class="tag-dot amber"></span>
+  <span id="tasksTodayText">0 Tasks Today</span>
+</div>
+    </div>
+  </section>
+
+<!-- YOUR PLANS (Firestore) -->
+<section style="max-width:1300px;margin:0 auto;padding:0 60px 40px;">
+  <h2 style="font-family:'Playfair Display',serif;font-size:28px;margin:20px 0 14px;">
+    Your Plans
+  </h2>
+
+  <div id="plansState" style="color:#6b6b6b;margin-bottom:12px;"></div>
+
+  <div
+    id="plansList"
+    style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;"
+  ></div>
+</section>
+
+<div class="courses-grid">
+
+  <a href="plan.html" class="course-card animate-on-scroll">
+    <div class="course-card-img">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg/1280px-Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg" alt="book">
+    </div>
+    <div class="course-card-body">
+      <h3>Plan</h3>
+      <p>Get a personalized study plan built around your subjects, deadlines, and daily routine.</p>
+    </div>
+  </a>
+
+  <a href="focus.html" class="course-card animate-on-scroll" style="transition-delay: 0.1s;">
+    <div class="course-card-img">
+      <img src="https://www.tumarketing.co.uk/wp-content/uploads/2015/03/focus-goal-setting.webp" alt="book">
+    </div>
+    <div class="course-card-body">
+      <h3>Focus</h3>
+      <p>Stay focused with structured study sessions designed to reduce distractions and prevent burnout.</p>
+    </div>
+  </a>
+
+  <a href="insight.html" class="course-card animate-on-scroll" style="transition-delay: 0.2s;">
+    <div class="course-card-img">
+      <img src="https://media.istockphoto.com/id/2042770665/vector/bright-yellow-speech-bubbles-with-icons-light-bulb-concept-ideas-or-insight.jpg?s=612x612&w=0&k=20&c=c8nCIXxy0sR_5995ZfjnmMP5dYLQjEaU6cBmC4_jXX4=" alt="book">
+    </div>
+    <div class="course-card-body">
+      <h3>Insights</h3>
+      <p>AI-powered insights that track your progress and adapt your study plan over time.</p>
+    </div>
+  </a>
+
+</div>
+
+
+
+
+
+  <!-- DASHBOARD -->
+  <section class="dashboard-section" id="about">
+    <div class="dashboard-left animate-on-scroll">
+      <div class="dashboard-left-img">  <img src="https://i.pinimg.com/736x/a0/cf/59/a0cf599f752f49421c870ff855153971.jpg" alt="book">     </div>
+      <h3>Track your focus, optimize every session.</h3>
+      <p class="sub-text">Monitor your productivity patterns and get smart recommendations to improve your study habits.</p>
+      <a href="#" class="btn-outline">
+        Check your activities
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+    <div class="dashboard-right animate-on-scroll" style="transition-delay: 0.15s;">
+      <h2>Explore our focus dashboard</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-label">Focus Time</div>
+<div class="stat-value" id="focusTimeValue">0h</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill" data-width="65"></div></div>
+          <div class="stat-percent">65%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">Tasks Completed</div>
+          <div class="stat-value" data-target="12" data-suffix="">0</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill" data-width="48"></div></div>
+          <div class="stat-percent">48%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value" id="streakValue">0 days</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill" data-width="78"></div></div>
+          <div class="stat-percent">78%</div>
+        </div>
+      </div>
+      <div class="stats-row-2">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-label">Sessions</div>
+          <div class="stat-value" data-target="5" data-suffix="">0</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill" data-width="40"></div></div>
+          <div class="stat-percent">40%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">☕</div>
+          <div class="stat-label">Break</div>
+          <div class="stat-value" data-target="1.2" data-suffix="h">0h</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill" data-width="30"></div></div>
+          <div class="stat-percent">30%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <span class="section-label">Testimonials</span>
+    <h2 class="animate-on-scroll">What students say</h2>
+    <div class="testimonials-grid" style="margin-top: 16px;">
+      <div class="testimonial-card animate-on-scroll">
+        <div class="stars">★★★★★</div>
+        <div class="quote-mark">"</div>
+        <p>This app transformed my study routine. I went from constant burnout to actually enjoying my sessions.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar t1">A</div>
+          <div>
+            <div class="testimonial-name">Aisha Khan</div>
+            <div class="testimonial-role">Medical Student</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card animate-on-scroll" style="transition-delay: 0.1s;">
+        <div class="stars">★★★★★</div>
+        <div class="quote-mark">"</div>
+        <p>The focus dashboard keeps me accountable. My GPA has improved significantly since I started using it.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar t2">R</div>
+          <div>
+            <div class="testimonial-name">Ryan Mitchell</div>
+            <div class="testimonial-role">Engineering Major</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card animate-on-scroll" style="transition-delay: 0.2s;">
+        <div class="stars">★★★★★</div>
+        <div class="quote-mark">"</div>
+        <p>I love the personalized plans. It adapts to my schedule perfectly and reminds me to take breaks!</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar t3">S</div>
+          <div>
+            <div class="testimonial-name">Sofia Chen</div>
+            <div class="testimonial-role">Law Student</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box animate-on-scroll">
+      <h2>Ready to optimize your studies?</h2>
+      <p>Join thousands of students who've beaten burnout and boosted their productivity.</p>
+      <a href="#" class="btn-light">
+        Start for free
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>AI Study Optimizer</h4>
+        <p>Your AI-powered study companion to beat burnout and boost productivity. Study smarter, not harder.</p>
+        <div class="footer-social">
+          <a href="#" title="Twitter">𝕏</a>
+          <a href="#" title="LinkedIn">in</a>
+          <a href="#" title="Instagram">📷</a>
+          <a href="#" title="GitHub">⌨</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+     
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p>📧 contact@studyoptimizer.com</p>
+        <p>📞 +1 (555) 123-4567</p>
+        <p>📍 New York, NY</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 AI Study Burnout &amp; Productivity Optimizer. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- BACK TO TOP -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    // Sticky header shrink
+    const header = document.getElementById('header');
+    const backToTop = document.getElementById('backToTop');
+
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 60);
+      backToTop.classList.toggle('visible', window.scrollY > 400);
+    });
+
+    // Mobile nav toggle
+    function toggleNav() {
+      document.getElementById('hamburger').classList.toggle('open');
+      document.getElementById('nav').classList.toggle('open');
+      document.getElementById('navOverlay').classList.toggle('open');
+    }
+
+    // Close nav on link click
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) toggleNav();
+      });
+    });
+
+    // Scroll animations (Intersection Observer)
+    const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          // Animate stat bar fills
+          const bars = entry.target.querySelectorAll('.stat-bar-fill');
+          bars.forEach(bar => {
+            const w = bar.getAttribute('data-width');
+            if (w) setTimeout(() => { bar.style.width = w + '%'; }, 300);
+          });
+
+          // Animate counter values
+          const vals = entry.target.querySelectorAll('.stat-value[data-target]');
+          vals.forEach(el => {
+            const target = parseFloat(el.getAttribute('data-target'));
+            const suffix = el.getAttribute('data-suffix') || '';
+            const isDecimal = target % 1 !== 0;
+            const duration = 1500;
+            const start = performance.now();
+
+            function tick(now) {
+              const progress = Math.min((now - start) / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              const current = target * eased;
+              el.textContent = (isDecimal ? current.toFixed(1) : Math.round(current)) + suffix;
+              if (progress < 1) requestAnimationFrame(tick);
+            }
+            setTimeout(() => requestAnimationFrame(tick), 400);
+          });
+
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const top = section.offsetTop - 120;
+        if (window.scrollY >= top) current = section.getAttribute('id');
+      });
+      document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+        if (!current && link.getAttribute('href') === '#') link.classList.add('active');
+      });
+    });
+
+    // Search input interaction
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && searchInput.value.trim()) {
+        alert('Searching for: ' + searchInput.value);
+      }
+    });
+
+    // Typing effect on hero
+    const heroH1 = document.querySelector('.hero-text h1');
+    const originalText = heroH1.textContent;
+    heroH1.textContent = '';
+    let charIndex = 0;
+    function typeWriter() {
+      if (charIndex < originalText.length) {
+        heroH1.textContent += originalText.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeWriter, 40);
+      }
+    }
+    setTimeout(typeWriter, 600);
+  </script>
+
+
+<script type="module">
+  import { getPlans, getActivePlanWithTasks, getTodaySessionStats, getStreak } from "./api.js";
+import { watchAuth, logout, auth } from "./firebase.js";
+
+  const stateEl = document.getElementById("plansState");
+  const listEl = document.getElementById("plansList");
+
+  function esc(s = "") {
+    return s.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    }[c]));
+  }
+
+  function setState(kind, msg = "") {
+    if (!stateEl) return;
+    if (kind === "loading") stateEl.textContent = "Loading plans...";
+    if (kind === "empty") stateEl.textContent = "No plans yet. Click Plan to create your first one.";
+    if (kind === "error") stateEl.textContent = "❌ " + (msg || "Failed to load plans");
+    if (kind === "ready") stateEl.textContent = "";
+  }
+
+  function renderPlans(plans) {
+    if (!listEl) return;
+
+    listEl.innerHTML = plans.map((p) => `
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+        <div style="font-weight:700;margin-bottom:6px;">${esc(p.title || "Untitled")}</div>
+        <div style="color:#6b6b6b;font-size:13px;">
+          ${p.active ? "Active plan ✅" : "Plan"}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  async function loadPlans() {
+    setState("loading");
+    if (listEl) listEl.innerHTML = "";
+
+    const data = await getPlans();
+    const plans = data?.plans || [];
+
+    if (plans.length === 0) {
+      setState("empty");
+      return;
+    }
+
+    renderPlans(plans);
+    setState("ready");
+  }
+
+  function waitForCurrentUser({ timeoutMs = 2000 } = {}) {
+    if (auth.currentUser) return Promise.resolve(auth.currentUser);
+
+    return new Promise((resolve, reject) => {
+      let done = false;
+
+      const unsub = watchAuth((u) => {
+        if (done) return;
+        if (u) {
+          done = true;
+          try { unsub(); } catch {}
+          resolve(u);
+        }
+      });
+
+      setTimeout(() => {
+        if (done) return;
+        done = true;
+        try { unsub(); } catch {}
+        reject(new Error("Auth not ready yet"));
+      }, timeoutMs);
+    });
+  }
+
+  async function updateTasksTodayTag() {
+    const el = document.getElementById("tasksTodayText");
+    if (!el) return;
+
+    try {
+      await waitForCurrentUser();
+      const { plan, tasks } = await getActivePlanWithTasks();
+
+      const remaining = (tasks || []).filter(t => !t.done).length;
+      el.textContent = plan ? `${remaining} Tasks Today` : "No Plan Today";
+    } catch (e) {
+      el.textContent = "0 Tasks Today";
+      console.error("TasksToday error:", e);
+    }
+  }
+
+  async function loadTodayStats() {
+    const focusEl = document.getElementById("focusTimeValue");
+    const sessionsEl = document.getElementById("sessionsValue"); // you use this for “Sessions” count
+
+    try {
+      await waitForCurrentUser();
+      const { totalMinutes, sessionsCount } = await getTodaySessionStats();
+
+      if (focusEl) focusEl.textContent = (totalMinutes / 60).toFixed(1) + "h";
+      if (sessionsEl) sessionsEl.textContent = String(sessionsCount);
+    } catch (e) {
+      console.error("loadTodayStats error:", e);
+    }
+  }
+
+  async function loadStreak() {
+    const el = document.getElementById("streakValue");
+    if (!el) return;
+
+    try {
+      await waitForCurrentUser();
+      const { streak } = await getStreak();
+      el.textContent = `${streak} days`;
+    } catch (e) {
+      console.error("loadStreak error:", e);
+    }
+  }
+
+  watchAuth(async (user) => {
+    if (!user) {
+      window.location.replace("first.html");
+      return;
+    }
+
+    await loadPlans();
+    await updateTasksTodayTag();
+    await loadTodayStats();
+    await loadStreak();
+  });
+
+  // Logout button
+  const btn = document.getElementById("logoutBtn");
+  if (btn) {
+    btn.addEventListener("click", async () => {
+      const ok = confirm("Log out now?");
+      if (!ok) return;
+      await logout();
+      window.location.replace("first.html");
+    });
+  }
+</script>
+
+<script type="module" src="./home-guard.js"></script>
+
+</body>
+</html>

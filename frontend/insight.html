@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insights Dashboard | AI Study Optimizer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --primary-green: #2F6F4E;
+      --soft-sage: #8AA38A;
+      --bg-cream: #f5f2ea;
+      --card-white: #ffffff;
+      --accent-gold: #C9B37E;
+
+      --nav-bg: hsl(40, 50%, 88%);
+      --border: hsl(30, 20%, 70%);
+      --fg: hsl(30, 20%, 15%);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg-cream);
+      color: #1f2a1f;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Navbar */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .nav-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--fg);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--fg);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .nav-links a:hover { opacity: 0.7; }
+
+    @media (max-width: 600px) {
+      nav { padding: 0.75rem 1rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links a { font-size: 0.75rem; }
+    }
+
+    .dashboard-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .btn-toggle {
+      border: 0;
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: #eef3ee;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-toggle:hover { background: #e2ede2; }
+    .btn-toggle.active {
+      background: var(--primary-green);
+      color: white;
+      box-shadow: 0 4px 10px rgba(47, 111, 78, 0.2);
+    }
+
+    .card {
+      background: var(--card-white);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.02);
+      transition: transform 0.3s ease;
+    }
+
+    .data-panel {
+      border-radius: 16px;
+      background: #fbf8f3;
+      border: 1px solid rgba(0,0,0,0.03);
+      padding: 16px;
+    }
+
+    .subject-legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 0;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .subject-legend-item:hover { background: #f0ede6; }
+    .subject-legend-item.hidden { opacity: 0.3; text-decoration: line-through; }
+
+    .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 8px; }
+
+    .action-btn {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--primary-green);
+      color: var(--primary-green);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 800;
+    }
+    .action-btn:hover { background: var(--primary-green); color: white; }
+
+    .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .kpi-small {
+      font-size: 11px;
+      opacity: 0.65;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .kpi-big {
+      font-size: 34px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 900px){
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 520px){
+      .kpi-row { grid-template-columns: 1fr; }
+    }
+
+    .status-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.04);
+      font-weight: 800;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .ai-box {
+      margin-top: 14px;
+      background: linear-gradient(90deg, #f0f4f0, #ffffff);
+      border-radius: 12px;
+      padding: 12px 16px;
+      border-left: 4px solid var(--primary-green);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .ai-text {
+      font-size: 13px;
+      color: #333;
+      font-style: italic;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-icon">🧠</div>
+      <div class="nav-title">AI Study Burnout &<br/>Productivity Optimizer</div>
+    </div>
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="plan.html">Plan</a>
+      <a href="focus.html">Focus</a>
+      <a href="insights.html" style="font-weight:900;">Insights</a>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <header style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:18px; gap: 12px;">
+      <div>
+        <div style="font-family:'Playfair Display', serif; font-size:28px; font-weight:900; line-height:1;">Insights Dashboard</div>
+        <div style="font-size:12px; opacity:0.65; font-weight:600; margin-top:6px;">Real sessions + productivity + burnout analytics</div>
+      </div>
+
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button class="action-btn" id="btnRefresh">Refresh</button>
+        <button class="action-btn" id="btnAISummary">Gemini Summary</button>
+      </div>
+    </header>
+
+    <!-- KPIs (Phase 11) -->
+    <div class="card fade-in" style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; flex-wrap: wrap;">
+        <div>
+          <div class="kpi-small">Status</div>
+          <div class="status-pill" id="statusText">Loading…</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="kpi-small">Current Session</div>
+          <div style="font-size:12px; font-weight:800; opacity:0.7;">Tracking sessions in Firestore</div>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="data-panel">
+          <div class="kpi-small">Productivity</div>
+          <div class="kpi-big" id="kpiProductivity">--%</div>
+          <div style="font-size:12px; opacity:0.7; font-weight:700;">actual vs planned</div>
+        </div>
+        <div class="data-panel">
+          <div class="kpi-small">Total Focus</div>
+          <div class="kpi-big" id="kpiTotal">--</div>
+          <div style="font-size:12px; opacity:0.7; font-weight:700;">minutes (last 7 days)</div>
+        </div>
+        <div class="data-panel">
+          <div class="kpi-small">Focus Efficiency</div>
+          <div class="kpi-big" id="kpiEfficiency">--%</div>
+          <div style="font-size:12px; opacity:0.7; font-weight:700;">actual vs scaled</div>
+        </div>
+        <div class="data-panel">
+          <div class="kpi-small">Avg Burnout</div>
+          <div class="kpi-big" id="kpiBurnout">--</div>
+          <div style="font-size:12px; opacity:0.7; font-weight:700;">lower is better</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 1 -->
+    <div style="display:grid; grid-template-columns: 1fr 1.1fr 1.4fr; gap:16px; margin-bottom:16px;">
+      <div class="card fade-in" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <span style="font-size:13px; font-weight:800; color:var(--primary-green);">Focus Time</span>
+          <span style="font-size:10px; color:#666;">TODAY</span>
+        </div>
+        <div style="text-align:center; padding:10px 0;">
+          <div id="displayTotalHours" style="font-size:42px; font-weight:900; color:#1f2a1f;">--</div>
+          <div id="displayComparison" style="font-size:12px; font-weight:600;">--</div>
+        </div>
+        <div style="font-size:11px; color:#888; text-align:center;">Real-time sync active</div>
+      </div>
+
+      <div class="card fade-in" style="animation-delay: 0.1s;">
+        <div style="font-size:13px; font-weight:800; margin-bottom:15px; display:flex; justify-content:space-between;">
+          <span>Priority Goals</span>
+          <button class="action-btn" id="btnBoost">Boost</button>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span style="font-weight:800;">Core Objectives</span>
+            <span id="labelHighPriority">0/0</span>
+          </div>
+          <div style="height:6px; background:#eee; border-radius:10px; overflow:hidden;">
+            <div id="barHighPriority" style="width:0%; height:100%; background:var(--primary-green); transition:width 1s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span style="font-weight:800;">Routine Tasks</span>
+            <span id="labelLowPriority">0/0</span>
+          </div>
+          <div style="height:6px; background:#eee; border-radius:10px; overflow:hidden;">
+            <div id="barLowPriority" style="width:0%; height:100%; background:var(--soft-sage); transition:width 1s cubic-bezier(0.22, 1, 0.36, 1);"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card fade-in" style="animation-delay: 0.2s;">
+        <div style="font-size:13px; font-weight:800; margin-bottom:10px;">Study Allocation</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:center;">
+          <div style="height:150px;">
+            <canvas id="canvasPieChart"></canvas>
+          </div>
+          <div id="customLegendContainer" style="font-size:11px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Chart -->
+    <div class="card fade-in" style="animation-delay: 0.3s;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap: 10px;">
+        <div>
+          <h3 style="margin:0; font-size:16px; font-weight:900;">Correlative Analytics</h3>
+          <p style="margin:2px 0 0 0; font-size:12px; color:#777;">Tracking mental fatigue against output volume</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button id="range7" class="btn-toggle active">7D</button>
+          <button id="range28" class="btn-toggle">28D</button>
+        </div>
+      </div>
+
+      <div class="data-panel" style="height:300px;">
+        <canvas id="canvasMainChart"></canvas>
+      </div>
+
+      <div class="ai-box">
+        <div style="font-size:18px;">💡</div>
+        <div>
+          <span style="font-size:11px; font-weight:900; color:var(--primary-green); text-transform:uppercase; display:block; margin-bottom:2px;">Gemini Analysis</span>
+          <div id="aiInsightMessage" class="ai-text">Click “Gemini Summary” to generate coaching feedback based on your recent sessions.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script type="module">
+    import { watchAuth, auth } from "./firebase.js";
+    import {
+      getTodaySessionStats,
+      getActivePlanWithTasks,
+      getSessionsSinceDays,
+      groupFocusMinutesByDay,
+      getAdvancedInsights,
+      getBurnoutScore
+    } from "./api.js";
+
+    const DASHBOARD_THEME = {
+      primary: "#2F6F4E",
+      secondary: "#8AA38A",
+      burnout: "#D68C7A",
+      palette: ["#2F6F4E", "#8AA38A", "#C9B37E", "#B7AFA3", "#4C7A67"]
+    };
+
+    let mainChartInstance = null;
+    let pieChartInstance = null;
+
+    function esc(s = "") {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      }[c]));
+    }
+
+    function setText(id, v) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = v;
+    }
+
+    function minutesToHM(mins) {
+      const m = Math.max(0, Math.round(Number(mins) || 0));
+      const h = Math.floor(m / 60);
+      const mm = m % 60;
+      return `${h}h ${mm}m`;
+    }
+
+    function toNiceMinutes(mins) {
+      const m = Math.round(Number(mins) || 0);
+      if (m < 60) return `${m}m`;
+      const h = Math.floor(m / 60);
+      const r = m % 60;
+      return r ? `${h}h ${r}m` : `${h}h`;
+    }
+
+    function setStatusSummary(prod, burnoutStatus, burnoutScore) {
+      const el = document.getElementById("statusText");
+      const tag =
+        prod >= 90 ? "Excellent" :
+        prod >= 75 ? "Strong" :
+        prod >= 55 ? "Average" :
+        "Needs improvement";
+      el.textContent = `${tag} • ${burnoutStatus} (${burnoutScore})`;
+    }
+
+    // ---------- REAL DATA BUILDERS ----------
+    async function loadTodayFocus() {
+      const { totalMinutes } = await getTodaySessionStats();
+      setText("displayTotalHours", minutesToHM(totalMinutes));
+      setText("displayComparison", "Live from sessions ✅");
+    }
+
+    async function loadPhase11KPIs() {
+      const adv = await getAdvancedInsights({ days: 7 });
+      const todayBurnout = await getBurnoutScore().catch(() => null);
+
+      const prod = Number(adv.productivity) || 0;
+      const eff = Number(adv.focusEfficiency) || 0;
+      const avgB = Number(adv.avgBurnout) || 0;
+
+      setText("kpiProductivity", `${prod}%`);
+      setText("kpiTotal", toNiceMinutes(adv.totalActual || 0));
+      setText("kpiEfficiency", `${eff}%`);
+      setText("kpiBurnout", `${avgB}`);
+
+      if (todayBurnout) {
+        setStatusSummary(prod, todayBurnout.status, todayBurnout.score);
+      } else {
+        setText("statusText", `Productivity: ${prod}%`);
+      }
+    }
+
+    async function loadPrioritiesAndSubjects() {
+      const { plan, tasks } = await getActivePlanWithTasks();
+
+      if (!plan) {
+        setText("labelHighPriority", "0/0");
+        setText("labelLowPriority", "0/0");
+        document.getElementById("barHighPriority").style.width = "0%";
+        document.getElementById("barLowPriority").style.width = "0%";
+        renderPie({ labels: ["No plan"], data: [100] });
+        return;
+      }
+
+      // SIMPLE PRIORITY RULE (no extra fields):
+      // first 3 tasks = High priority, rest = Low priority
+      const high = tasks.slice(0, 3);
+      const low = tasks.slice(3);
+
+      const highDone = high.filter(t => t.done).length;
+      const lowDone = low.filter(t => t.done).length;
+
+      const highTotal = high.length || 0;
+      const lowTotal = low.length || 0;
+
+      setText("labelHighPriority", `${highDone}/${highTotal}`);
+      setText("labelLowPriority", `${lowDone}/${lowTotal}`);
+
+      document.getElementById("barHighPriority").style.width =
+        highTotal ? `${(highDone / highTotal) * 100}%` : "0%";
+
+      document.getElementById("barLowPriority").style.width =
+        lowTotal ? `${(lowDone / lowTotal) * 100}%` : "0%";
+
+      // SUBJECT ALLOCATION from tasks plannedMinutes grouped by subject
+      const subjectMap = {};
+      tasks.forEach(t => {
+        const subject = (t.subject || "General").trim() || "General";
+        const mins = Number(t.plannedMinutes) || 25;
+        subjectMap[subject] = (subjectMap[subject] || 0) + mins;
+      });
+
+      const labels = Object.keys(subjectMap);
+      const mins = labels.map(k => subjectMap[k]);
+      const total = mins.reduce((a, b) => a + b, 0) || 1;
+
+      const perc = mins.map(v => Math.max(1, Math.round((v / total) * 100)));
+      renderPie({ labels, data: perc });
+    }
+
+    async function loadRange(days) {
+      const sessions = await getSessionsSinceDays(days);
+      const { keys, map } = groupFocusMinutesByDay(sessions, days);
+
+      const labels = keys.map(k => {
+        const [y, m, d] = k.split("-").map(Number);
+        const dt = new Date(y, m - 1, d);
+        if (days === 7) return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
+        return String(d);
+      });
+
+      const focusMins = keys.map(k => map[k] || 0);
+
+      // Better burnout line: use stored burnoutScoreAtStart if available (Phase 11),
+      // else fallback to heuristic based on minutes.
+      const burnoutRisk = buildBurnoutSeriesFromSessions(keys, sessions, focusMins);
+
+      renderMainChart({ labels, focusMins, burnoutRisk });
+      updateAIInsightFromReal(focusMins);
+    }
+
+    function buildBurnoutSeriesFromSessions(keys, sessions, focusMins) {
+      // Map key -> avg burnoutScoreAtStart
+      const bucket = {};
+      const count = {};
+
+      sessions.forEach(s => {
+        if (s.status !== "completed" || s.mode !== "pomodoro") return;
+        const dt = s.startedAt?.toDate?.();
+        if (!dt) return;
+
+        const key = [
+          dt.getFullYear(),
+          String(dt.getMonth() + 1).padStart(2, "0"),
+          String(dt.getDate()).padStart(2, "0"),
+        ].join("-");
+
+        const b = Number(s.burnoutScoreAtStart);
+        if (!Number.isFinite(b)) return;
+
+        bucket[key] = (bucket[key] || 0) + b;
+        count[key] = (count[key] || 0) + 1;
+      });
+
+      return keys.map((k, idx) => {
+        if (count[k]) return Math.round(bucket[k] / count[k]);
+        // fallback heuristic
+        const m = focusMins[idx] || 0;
+        return Math.min(100, Math.round((m / 180) * 100));
+      });
+    }
+
+    // ---------- CHARTS ----------
+    function renderPie({ labels, data }) {
+      const ctx = document.getElementById("canvasPieChart").getContext("2d");
+      if (pieChartInstance) pieChartInstance.destroy();
+
+      pieChartInstance = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: labels.map((_, i) => DASHBOARD_THEME.palette[i % DASHBOARD_THEME.palette.length]),
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "70%",
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      const legendBox = document.getElementById("customLegendContainer");
+      legendBox.innerHTML = "";
+
+      labels.forEach((label, i) => {
+        const item = document.createElement("div");
+        item.className = "subject-legend-item";
+        item.innerHTML = `
+          <div><span class="dot" style="background:${DASHBOARD_THEME.palette[i % DASHBOARD_THEME.palette.length]}"></span><strong>${esc(label)}</strong></div>
+          <span style="opacity:0.6">${data[i]}%</span>
+        `;
+        item.onclick = () => {
+          const meta = pieChartInstance.getDatasetMeta(0);
+          item.classList.toggle("hidden");
+          meta.data[i].hidden = !meta.data[i].hidden;
+          pieChartInstance.update();
+        };
+        legendBox.appendChild(item);
+      });
+    }
+
+    function renderMainChart({ labels, focusMins, burnoutRisk }) {
+      const ctx = document.getElementById("canvasMainChart").getContext("2d");
+      if (mainChartInstance) mainChartInstance.destroy();
+
+      mainChartInstance = new Chart(ctx, {
+        data: {
+          labels,
+          datasets: [
+            {
+              type: "bar",
+              label: "Focus Minutes",
+              data: focusMins,
+              backgroundColor: DASHBOARD_THEME.primary,
+              borderRadius: 4,
+              yAxisID: "y"
+            },
+            {
+              type: "line",
+              label: "Burnout (avg)",
+              data: burnoutRisk,
+              borderColor: DASHBOARD_THEME.burnout,
+              borderWidth: 3,
+              tension: 0.4,
+              pointBackgroundColor: "#fff",
+              yAxisID: "y1"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { boxWidth: 12, usePointStyle: true, font: { size: 11 } }
+            }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { display: false }, title: { display: true, text: "Min", font: { size: 10 } } },
+            y1: { position: "right", min: 0, max: 100, grid: { color: "rgba(0,0,0,0.03)" }, title: { display: true, text: "Score", font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function updateAIInsightFromReal(focusMins) {
+      const el = document.getElementById("aiInsightMessage");
+      if (!el) return;
+
+      const avg = focusMins.reduce((a,b)=>a+b,0) / (focusMins.length || 1);
+      const last = focusMins[focusMins.length - 1] || 0;
+
+      if (last >= 180) {
+        el.textContent = "High focus load detected today. Add a 15–20 minute walk break to reduce burnout risk.";
+      } else if (avg >= 90) {
+        el.textContent = "Good consistency. Try scheduling your hardest subject in your first focus block tomorrow.";
+      } else {
+        el.textContent = "Low focus time this period. Start with a short 10–15 minute warm-up session to rebuild momentum.";
+      }
+    }
+
+    // ---------- AI SUMMARY (Gemini via Render backend) ----------
+    async function generateGeminiSummary() {
+      const el = document.getElementById("aiInsightMessage");
+      el.textContent = "Generating Gemini coaching summary…";
+
+      const adv = await getAdvancedInsights({ days: 7 });
+      const today = await getBurnoutScore().catch(() => null);
+      const sessions = await getSessionsSinceDays(7);
+
+      const payload = {
+        days: 7,
+        totalActualMinutes: adv.totalActual || 0,
+        totalPlannedMinutes: adv.totalPlanned || 0,
+        productivity: adv.productivity || 0,
+        focusEfficiency: adv.focusEfficiency || 0,
+        avgBurnout: adv.avgBurnout || 0,
+        todayBurnout: today?.score || 0,
+        todayStatus: today?.status || "",
+        topSubjects: Object.entries(adv.subjectMap || {})
+          .sort((a, b) => (b[1] || 0) - (a[1] || 0))
+          .slice(0, 3)
+          .map(([subject, minutes]) => ({ subject, minutes })),
+        sessionsCount: sessions.filter((s) => s.status === "completed" && s.mode === "pomodoro").length,
+      };
+
+      const base = window.AI_BASE_URL || "http://localhost:5055";
+      const url = `${base}/ai/insights`;
+
+      const token = await auth.currentUser.getIdToken(true);
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "AI insights failed");
+
+      el.textContent = data?.summary || "Gemini returned no summary text.";
+    }
+
+    // ---------- UI RANGE BUTTONS ----------
+    async function updateTimeRange(days) {
+      document.getElementById("range7").classList.toggle("active", days === 7);
+      document.getElementById("range28").classList.toggle("active", days === 28);
+      await loadRange(days);
+    }
+
+    // ---------- INIT ----------
+    async function init() {
+      // buttons
+      document.getElementById("range7").addEventListener("click", () => updateTimeRange(7));
+      document.getElementById("range28").addEventListener("click", () => updateTimeRange(28));
+      document.getElementById("btnRefresh").addEventListener("click", async () => {
+        await loadTodayFocus();
+        await loadPhase11KPIs();
+        await loadPrioritiesAndSubjects();
+        await loadRange(7);
+      });
+      document.getElementById("btnBoost").addEventListener("click", () => alert("Focus mode started!"));
+      document.getElementById("btnAISummary").addEventListener("click", async () => {
+        try {
+          await generateGeminiSummary();
+        } catch (e) {
+          console.error(e);
+          document.getElementById("aiInsightMessage").textContent = `Gemini summary failed: ${e?.message || e}`;
+        }
+      });
+
+      // load data
+      await loadTodayFocus();
+      await loadPhase11KPIs();
+      await loadPrioritiesAndSubjects();
+      await loadRange(7);
+    }
+
+    watchAuth(async (user) => {
+      if (!user) {
+        window.location.replace("first.html");
+        return;
+      }
+      await init();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Study Burnout & Productivity Optimizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .btn-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+}
+.btn-secondary {
+  background: rgba(0,0,0,0.06);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { opacity: 0.9; }
+
+  .status-card {
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid var(--border);
+}
+.status-title {
+  font-weight: 800;
+}
+.status-meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+  :root {
+    --bg: hsl(38, 35%, 92%);
+    --fg: hsl(30, 10%, 15%);
+    --card: hsl(38, 30%, 88%);
+    --primary: hsl(100, 15%, 25%);
+    --primary-fg: hsl(38, 35%, 92%);
+    --secondary: hsl(38, 25%, 82%);
+    --muted: hsl(30, 8%, 45%);
+    --border: hsl(30, 15%, 75%);
+    --radius: 0.5rem;
+    --nav-bg: hsl(40, 50%, 88%);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; }
+
+  /* Navbar */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem; background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-title { font-size: 1rem; font-weight: 700; line-height: 1.3; }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a { text-decoration: none; color: var(--fg); font-size: 0.875rem; font-weight: 500; }
+  .nav-links a:hover { opacity: 0.75; }
+
+  @media (max-width: 600px) {
+    nav { padding: 0.75rem 1rem; }
+    .nav-links { gap: 1rem; }
+    .nav-links a { font-size: 0.75rem; }
+  }
+
+  .header { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0 1.25rem; }
+  .icon-circle {
+    width: 64px; height: 64px; border-radius: 50%; background: var(--secondary);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem;
+    font-size: 1.75rem;
+  }
+  .header h1 { font-size: 1.25rem; text-align: center; line-height: 1.5; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+
+  .card {
+    background: var(--card);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label {
+    display: block; font-size: 0.875rem; font-weight: 600;
+    letter-spacing: 0.025em; margin-bottom: 0.5rem;
+  }
+  .form-group input, .form-group textarea {
+    width: 100%; padding: 0.625rem 0.75rem; border: 1px solid var(--border);
+    border-radius: var(--radius); background: var(--bg); font-family: 'Inter', sans-serif;
+    font-size: 0.875rem; color: var(--fg); outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+  .form-group textarea { min-height: 90px; resize: none; }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--muted); }
+
+  .energy-label { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.75rem; display: block; }
+  .energy-row { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .energy-btn {
+    width: 48px; height: 48px; border-radius: var(--radius); border: none;
+    background: var(--primary); color: var(--primary-fg); font-weight: 600;
+    font-size: 0.875rem; cursor: pointer; opacity: 0.8; transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .energy-btn:hover, .energy-btn.active { opacity: 1; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+  .submit-btn {
+    background: var(--primary); color: var(--primary-fg); border: none;
+    padding: 0.75rem 1.25rem; border-radius: var(--radius); font-weight: 600;
+    font-size: 0.875rem; cursor: pointer; transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .submit-btn:hover { opacity: 0.9; }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .back-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 0.875rem; margin-bottom: 1rem; padding: 0.25rem 0;
+    font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .back-btn:hover { color: var(--fg); }
+
+  .plan-heading { font-size: 1.1rem; margin: 1.1rem 0 0.5rem; }
+  .plan-item {
+    background: hsla(38, 25%, 82%, 0.5);
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.45rem;
+    color: hsla(30, 10%, 15%, 0.9);
+  }
+
+  .hidden { display: none; }
+  .muted { color: var(--muted); font-size: 0.9rem; }
+  .error { color: #b00020; font-size: 0.9rem; margin-top: 0.75rem; }
+  .ok { color: #0a7a2f; font-size: 0.9rem; margin-top: 0.75rem; }
+
+  .saved-title { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
+  .saved-title h2 { font-size: 1.1rem; }
+  .saved-list { margin-top: 0.75rem; display:flex; flex-direction:column; gap:0.5rem; }
+  .saved-card {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.25);
+    border-radius: 0.75rem;
+    padding: 0.85rem 0.9rem;
+  }
+  .saved-card .t { font-weight: 700; }
+  .saved-card .meta { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+  .saved-card ul { margin-top: 0.5rem; padding-left: 1.1rem; }
+  .saved-card li { margin: 0.15rem 0; }
+</style>
+</head>
+
+<body>
+<nav>
+  <div class="nav-brand">
+    <div class="nav-icon">🧠</div>
+    <div class="nav-title">AI Study Burnout &<br/>Productivity Optimizer</div>
+  </div>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="plan.html">Plan</a>
+    <a href="focus.html">Focus</a>
+    <a href="insight.html">Insights</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <div class="icon-circle">🧠</div>
+    <h1>Generate a Study Plan</h1>
+  </div>
+
+  <div class="grid">
+
+    <!-- Active plan + Optimize -->
+    <!-- Active plan + Burnout + Optimize -->
+<div class="card">
+  <h2>Your active plan</h2>
+  <div id="activeErr" class="error hidden"></div>
+  <div id="activePlanBox" class="muted">Loading…</div>
+
+  <!-- Burnout badge -->
+  <div id="burnoutBox" style="margin-top:1rem;"></div>
+
+  <button class="submit-btn btn-secondary" id="optimizeBtn" type="button">
+  Optimize My Tasks (AI)
+</button>
+
+  <div id="optimizeStatus" class="muted" style="margin-top:0.5rem;"></div>
+</div>
+    <!-- Generate plan -->
+    <div class="card">
+      <form id="studyForm">
+        <div class="form-group">
+          <label>Subjects</label>
+          <input type="text" id="subjects" placeholder="e.g., computer science, math" required />
+        </div>
+
+        <div class="form-group">
+          <label>Study duration</label>
+          <input type="text" id="studyDuration" placeholder="e.g., 90 minutes" required />
+        </div>
+
+        <div class="form-group">
+          <label>Tasks to Complete</label>
+          <input type="text" id="tasksToComplete" placeholder="e.g., Chapter 1 notes, Past paper Q1-10" required />
+          <div class="muted" style="margin-top:0.4rem">Tip: separate tasks with comma or new line.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Upcoming Deadlines</label>
+          <input type="text" id="upcomingDeadlines" placeholder="e.g., Math exam on Friday" />
+        </div>
+
+        <label class="energy-label">Energy Level (1-5)</label>
+        <div class="energy-row">
+          <button type="button" class="energy-btn" data-level="1">1</button>
+          <button type="button" class="energy-btn" data-level="2">2</button>
+          <button type="button" class="energy-btn active" data-level="3">3</button>
+          <button type="button" class="energy-btn" data-level="4">4</button>
+          <button type="button" class="energy-btn" data-level="5">5</button>
+        </div>
+
+        <div class="form-group">
+          <label>What was hardest today?</label>
+          <textarea id="hardestToday" placeholder="Share your thoughts..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Generate & Save Plan</button>
+        <div id="status" class="muted"></div>
+        <div id="err" class="error hidden"></div>
+      </form>
+
+      <!-- Plan View -->
+      <div id="planView" class="hidden"></div>
+    </div>
+
+    <!-- Saved plans -->
+    <div class="card">
+      <div class="saved-title">
+        <h2>Your saved plans</h2>
+        <button class="submit-btn" id="refreshBtn" type="button">Refresh</button>
+      </div>
+      <div class="muted">Saved in Firestore (free plan). Only you can read/write your data.</div>
+      <div id="savedErr" class="error hidden"></div>
+      <div id="savedPlans" class="saved-list"></div>
+    </div>
+    
+  </div>
+</div>
+
+<script type="module">
+  import {
+    createPlan,
+    getPlans,
+    getPlanTasks,
+    getActivePlanWithTasks,
+    setTaskDone,
+    optimizeTasksInPlan,
+    getBurnoutScore
+  } from "./api.js";
+
+  import { watchAuth } from "./firebase.js";
+  import { aiGeneratePlan, aiOptimizePlan } from "./ai.js";
+
+  const burnoutBox = document.getElementById("burnoutBox");
+  const activePlanBox = document.getElementById("activePlanBox");
+  const activeErr = document.getElementById("activeErr");
+  const optimizeBtn = document.getElementById("optimizeBtn");
+  const optimizeStatus = document.getElementById("optimizeStatus");
+
+  let energyLevel = 3;
+
+  const form = document.getElementById("studyForm");
+  const planView = document.getElementById("planView");
+  const submitBtn = document.getElementById("submitBtn");
+  const statusEl = document.getElementById("status");
+  const errEl = document.getElementById("err");
+
+  const savedWrap = document.getElementById("savedPlans");
+  const savedErr = document.getElementById("savedErr");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  function escapeHtml(s) {
+    return String(s || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function tsToDateString(ts) {
+    if (!ts) return "";
+    if (typeof ts.toDate === "function") return ts.toDate().toLocaleString();
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? "" : d.toLocaleString();
+  }
+
+  function setError(message) {
+    errEl.textContent = message || "";
+    errEl.classList.toggle("hidden", !message);
+  }
+
+  function setStatus(message, ok = false) {
+    statusEl.textContent = message || "";
+    statusEl.className = ok ? "ok" : "muted";
+  }
+
+  document.querySelectorAll(".energy-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".energy-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      energyLevel = parseInt(btn.dataset.level, 10);
+    });
+  });
+
+  async function renderBurnoutUI() {
+    if (!burnoutBox) return;
+
+    try {
+      const burnout = await getBurnoutScore();
+
+      const color =
+        burnout.score > 60 ? "#b00020" :
+        burnout.score > 30 ? "#ff9800" :
+        "#0a7a2f";
+
+      burnoutBox.innerHTML = `
+        <div class="saved-card" style="border-left:6px solid ${color};">
+          <div class="t">Burnout Status: ${burnout.status}</div>
+          <div class="meta">Score: ${burnout.score}/100</div>
+        </div>
+      `;
+    } catch (e) {
+      burnoutBox.innerHTML = `
+        <div class="saved-card" style="border-left:6px solid #b00020;">
+          <div class="t">Burnout Status: Error</div>
+          <div class="meta">${escapeHtml(e?.message || String(e))}</div>
+        </div>
+      `;
+    }
+  }
+
+  async function loadActivePlanUI() {
+    activeErr.classList.add("hidden");
+    activePlanBox.innerHTML = `<div class="muted">Loading active plan…</div>`;
+
+    try {
+      const { plan, tasks = [] } = await getActivePlanWithTasks();
+
+      if (!plan) {
+        activePlanBox.innerHTML = `<div class="muted">No active plan yet.</div>`;
+        return;
+      }
+
+      const total = tasks.length;
+      const doneCount = tasks.filter(t => t.done).length;
+      const pct = total ? Math.round((doneCount / total) * 100) : 0;
+
+      const list = tasks.map(t => `
+        <div class="saved-card" style="display:flex;align-items:center;gap:0.75rem;">
+          <input type="checkbox" data-taskid="${t.id}" ${t.done ? "checked" : ""} />
+          <div style="flex:1;">
+            <div class="t">${escapeHtml(t.title)}</div>
+            <div class="meta">${escapeHtml(t.subject || "General")} • ${t.plannedMinutes || 25} min</div>
+          </div>
+        </div>
+      `).join("");
+
+      activePlanBox.innerHTML = `
+        <div class="saved-card">
+          <div class="t">${escapeHtml(plan.title)} (Active)</div>
+          <div class="meta">${tsToDateString(plan.createdAt)}</div>
+          <div style="margin:0.75rem 0;">
+            <div class="muted">${doneCount}/${total} (${pct}%)</div>
+            <div style="height:10px;background:rgba(0,0,0,0.08);border-radius:999px;overflow:hidden;">
+              <div style="height:10px;width:${pct}%;background:var(--primary);"></div>
+            </div>
+          </div>
+          ${list}
+        </div>
+      `;
+
+      activePlanBox.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", async () => {
+          try {
+            await setTaskDone(plan.id, cb.dataset.taskid, cb.checked);
+            await loadActivePlanUI();
+            await loadPlansUI();
+            await renderBurnoutUI();
+          } catch (e) {
+            activeErr.textContent = e.message;
+            activeErr.classList.remove("hidden");
+          }
+        });
+      });
+
+    } catch (e) {
+      activePlanBox.innerHTML = "";
+      activeErr.textContent = e.message;
+      activeErr.classList.remove("hidden");
+    }
+  }
+
+  async function loadPlansUI() {
+    savedWrap.innerHTML = `<div class="muted">Loading…</div>`;
+    try {
+      const { plans = [] } = await getPlans();
+
+      if (!plans.length) {
+        savedWrap.innerHTML = `<div class="muted">No saved plans yet.</div>`;
+        return;
+      }
+
+      const rows = [];
+      for (const p of plans) {
+        const tasks = await getPlanTasks(p.id).catch(() => []);
+        rows.push(`
+          <div class="saved-card">
+            <div class="t">${escapeHtml(p.title)} ${p.active ? "(Active)" : ""}</div>
+            <div class="meta">${tsToDateString(p.createdAt)}</div>
+            ${
+              tasks.length
+                ? `<ul>${tasks.map(t => `<li>${escapeHtml(t.title)} — ${t.plannedMinutes} min</li>`).join("")}</ul>`
+                : `<div class="muted">No tasks</div>`
+            }
+          </div>
+        `);
+      }
+
+      savedWrap.innerHTML = rows.join("");
+    } catch (e) {
+      savedWrap.innerHTML = `<div class="error">${e.message}</div>`;
+    }
+  }
+
+  refreshBtn.addEventListener("click", loadPlansUI);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setError("");
+    submitBtn.disabled = true;
+    setStatus("Generating AI plan...");
+
+    try {
+      const payload = {
+        subjects: subjects.value.trim(),
+        studyDuration: studyDuration.value.trim(),
+        tasksToComplete: tasksToComplete.value.trim(),
+        upcomingDeadlines: upcomingDeadlines.value.trim(),
+        energyLevel,
+        hardestToday: hardestToday.value.trim(),
+      };
+
+      const ai = await aiGeneratePlan(payload);
+
+      const rawTasks = payload.tasksToComplete.split(/[\n,]+/)
+        .map(t => t.trim())
+        .filter(Boolean);
+
+      const tasks = rawTasks.map((t, i) => ({
+        title: t,
+        subject: payload.subjects,
+        plannedMinutes: 25,
+        order: i,
+      }));
+
+      await createPlan({
+        title: ai?.title || `Study Plan: ${payload.subjects}`,
+        tasks,
+        input: payload,
+      });
+
+      form.classList.add("hidden");
+      planView.classList.remove("hidden");
+      planView.innerHTML = `<h3>Plan Saved ✅</h3>`;
+
+      await loadActivePlanUI();
+      await loadPlansUI();
+      await renderBurnoutUI();
+
+      setStatus("Plan saved successfully ✅", true);
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      submitBtn.disabled = false;
+      setStatus("");
+    }
+  });
+
+  optimizeBtn.addEventListener("click", async () => {
+    optimizeStatus.textContent = "Optimizing...";
+
+    try {
+      const { plan, tasks } = await getActivePlanWithTasks();
+      if (!plan) throw new Error("No active plan.");
+
+      const result = await aiOptimizePlan({
+        tasks: tasks.map(t => ({ title: t.title })),
+      });
+
+      await optimizeTasksInPlan(plan.id, result.optimized);
+
+      await loadActivePlanUI();
+      await loadPlansUI();
+      await renderBurnoutUI();
+
+      optimizeStatus.textContent = "Optimized successfully ✅";
+    } catch (e) {
+      optimizeStatus.textContent = "Optimize failed: " + e.message;
+    }
+  });
+
+  watchAuth(async (user) => {
+    if (!user) {
+      window.location.replace("first.html");
+      return;
+    }
+    await loadActivePlanUI();
+    await loadPlansUI();
+    await renderBurnoutUI();
+  });
+</script>
+
+</body>
+</html>

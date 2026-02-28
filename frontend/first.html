@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Study Burnout & Productivity Optimizer</title>
+
+  <style>
+    .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .feature-card:hover { transform: translateY(-10px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body>
+  <!-- LANDING PAGE -->
+  <div id="landing" style="
+    min-height: 100vh;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.5) 100%),
+                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    font-family: Georgia, 'Times New Roman', serif;
+  ">
+    <!-- Header -->
+    <header style="display: flex; align-items: center; padding: 24px 40px; gap: 12px;">
+      <div style="
+        width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;
+        border: 1px solid rgba(255,255,255,0.2); font-size: 18px;
+      ">🧠</div>
+      <div>
+        <div style="color: white; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; font-family: sans-serif;">AI Study Burnout &</div>
+        <div style="color: rgba(255,255,255,0.7); font-size: 12px; font-family: sans-serif;">Productivity Optimizer</div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 20px;">
+      <h1 style="color: white; font-size: 42px; font-weight: 400; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+        Welcome<span style="font-size: 28px;">〜</span>
+      </h1>
+      <p style="color: rgba(255,255,255,0.9); font-size: 18px; font-style: italic; margin: 0 0 48px; text-shadow: 0 1px 10px rgba(0,0,0,0.3);">
+        "Smart planning. Better focus. Zero burnout."
+      </p>
+
+      <!-- Feature Cards -->
+      <div style="display: flex; gap: 20px; max-width: 900px; width: 100%; justify-content: center; flex-wrap: wrap; margin-bottom: 48px;">
+        <div class="feature-card" style="background: rgba(80,70,50,0.65); backdrop-filter: blur(12px); border-radius: 12px; padding: 28px 24px; width: 260px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+          <div style="font-size: 28px; margin-bottom: 8px;">📋</div>
+          <h3 style="color: white; font-size: 20px; font-weight: 600; margin-bottom: 8px; font-family: sans-serif;">Plan</h3>
+          <p style="color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.6; font-family: sans-serif;">We create a personalized study plan based on your subjects, deadlines, energy levels, and daily routine.</p>
+        </div>
+        <div class="feature-card" style="background: rgba(80,70,50,0.65); backdrop-filter: blur(12px); border-radius: 12px; padding: 28px 24px; width: 260px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+          <div style="font-size: 28px; margin-bottom: 8px;">✅</div>
+          <h3 style="color: white; font-size: 20px; font-weight: 600; margin-bottom: 8px; font-family: sans-serif;">Focus</h3>
+          <p style="color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.6; font-family: sans-serif;">Our focus system helps you stay on task and avoid burnout. We break sessions into manageable blocks.</p>
+        </div>
+        <div class="feature-card" style="background: rgba(80,70,50,0.65); backdrop-filter: blur(12px); border-radius: 12px; padding: 28px 24px; width: 260px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+          <div style="font-size: 28px; margin-bottom: 8px;">📊</div>
+          <h3 style="color: white; font-size: 20px; font-weight: 600; margin-bottom: 8px; font-family: sans-serif;">Insights</h3>
+          <p style="color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.6; font-family: sans-serif;">Understand your study habits and improve faster with smart insights.</p>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div style="display: flex; gap: 16px;">
+        <button onclick="showLogin()" style="
+          padding: 14px 48px; background: linear-gradient(135deg, #6c5ce7, #a855f7); color: white;
+          border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+          letter-spacing: 1px; box-shadow: 0 4px 20px rgba(108,92,231,0.4); font-family: sans-serif;
+        ">Log In</button>
+
+        <button onclick="showSignup()" style="
+          padding: 14px 48px; background: rgba(255,255,255,0.12); color: white;
+          border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 16px;
+          font-weight: 600; cursor: pointer; letter-spacing: 1px; backdrop-filter: blur(8px); font-family: sans-serif;
+        ">Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN FLOW -->
+  <div id="login" style="display: none;">
+    <!-- Method Selection -->
+    <div id="login-method" style="
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: #f0f4f8; font-family: 'Segoe UI', sans-serif;
+    ">
+      <div style="background: white; border-radius: 12px; padding: 48px 40px; width: 420px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); text-align: center;">
+        <div style="margin-bottom: 24px;">
+          <svg width="74" height="24" viewBox="0 0 74 24">
+            <text x="0" y="20" font-family="Arial" font-size="22" font-weight="500">
+              <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">o</tspan><tspan fill="#FBBC05">o</tspan><tspan fill="#4285F4">g</tspan><tspan fill="#34A853">l</tspan><tspan fill="#EA4335">e</tspan>
+            </text>
+          </svg>
+        </div>
+
+        <h2 style="font-size: 22px; color: #202124; margin: 0 0 8px; font-weight: 400;">Sign in</h2>
+        <p style="font-size: 14px; color: #5f6368; margin: 0 0 32px;">to continue to <b>AI Study Optimizer</b></p>
+
+        <button onclick="showEmailLogin()" style="
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid #dadce0;
+          border-radius: 6px;
+          background: white;
+          cursor: pointer;
+          font-size: 14px;
+          color: #3c4043;
+          font-weight: 500;
+        ">
+          Continue with Email
+        </button>
+
+        <!-- ✅ Google Button -->
+        <button id="googleBtn" style="
+          width:100%;
+          padding:12px 16px;
+          border:1px solid #dadce0;
+          border-radius:6px;
+          background:white;
+          cursor:pointer;
+          font-size:14px;
+          color:#3c4043;
+          font-weight:500;
+          margin-top:10px;
+        ">
+          Continue with Google
+        </button>
+
+        <div style="margin-top: 24px;">
+          <button onclick="showLanding()" style="padding: 8px 24px; background: none; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px; color: #5f6368; cursor: pointer;">Back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading UI -->
+    <div id="login-loading" style="display: none; min-height: 100vh; align-items: center; justify-content: center; background: #f0f4f8; font-family: 'Segoe UI', sans-serif;">
+      <div style="background: white; border-radius: 12px; padding: 48px 40px; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.1); max-width: 400px;">
+        <div style="width: 48px; height: 48px; border: 4px solid #e0e0e0; border-top-color: #4285F4; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 24px;"></div>
+        <p style="color: #5f6368; font-size: 16px;">Signing you in...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNUP FLOW -->
+  <div id="signup" style="display: none; min-height: 100vh; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); font-family: 'Segoe UI', sans-serif;">
+    <div id="signup-form" style="background: rgba(255,255,255,0.95); border-radius: 16px; padding: 48px 40px; width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+      <div style="height: 4px; background: #e8e8e8; border-radius: 2px; margin-bottom: 32px; overflow: hidden;">
+        <div id="progress-bar" style="height: 100%; width: 14.28%; background: linear-gradient(90deg, #6c5ce7, #a855f7); border-radius: 2px; transition: width 0.4s ease;"></div>
+      </div>
+
+      <p id="step-counter" style="font-size: 13px; color: #999; margin: 0 0 8px;">Step 1 of 7</p>
+      <h2 id="step-title" style="font-size: 24px; color: #1a1a2e; margin: 0 0 24px; font-weight: 600;">What's your name?</h2>
+
+      <div id="step-content">
+        <div id="step-1" style="display: flex; gap: 12px;">
+          <input id="firstName" type="text" placeholder="First name" style="flex: 1; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa;">
+          <input id="lastName" type="text" placeholder="Last name" style="flex: 1; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa;">
+        </div>
+
+        <div id="step-2" style="display: none;">
+          <input id="email" type="email" placeholder="you@example.com" style="width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa; box-sizing: border-box;">
+        </div>
+
+        <div id="step-3" style="display: none;">
+          <input id="password" type="password" placeholder="At least 8 characters" style="width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa; box-sizing: border-box;">
+        </div>
+
+        <div id="step-4" style="display: none;">
+          <input id="dob" type="date" style="width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa; box-sizing: border-box;">
+        </div>
+
+        <div id="step-5" style="display: none; flex-direction: column; gap: 10px;">
+          <div onclick="selectRole('student')" id="role-student" style="padding: 16px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s;">
+            <div style="font-size: 15px; font-weight: 600; color: #1a1a2e;">🎓 Yes, I'm a student</div>
+            <div style="font-size: 13px; color: #888; margin-top: 2px;">High school, university, or college</div>
+          </div>
+          <div onclick="selectRole('professional')" id="role-professional" style="padding: 16px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s;">
+            <div style="font-size: 15px; font-weight: 600; color: #1a1a2e;">💼 No, I'm a professional</div>
+            <div style="font-size: 13px; color: #888; margin-top: 2px;">Working and learning on the side</div>
+          </div>
+          <div onclick="selectRole('self-learner')" id="role-self-learner" style="padding: 16px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s;">
+            <div style="font-size: 15px; font-weight: 600; color: #1a1a2e;">📚 Self-learner</div>
+            <div style="font-size: 13px; color: #888; margin-top: 2px;">Learning independently</div>
+          </div>
+        </div>
+
+        <div id="step-6" style="display: none;">
+          <input id="subject" type="text" placeholder="e.g. Computer Science, Math, Medicine..." style="width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa; box-sizing: border-box;">
+        </div>
+
+        <div id="step-7" style="display: none; flex-direction: column; gap: 10px;">
+          <div onclick="selectGoal('exams')" id="goal-exams" style="padding: 14px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s; font-size: 15px; font-weight: 500; color: #1a1a2e;">📝 Prepare for exams</div>
+          <div onclick="selectGoal('habits')" id="goal-habits" style="padding: 14px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s; font-size: 15px; font-weight: 500; color: #1a1a2e;">⏰ Build better study habits</div>
+          <div onclick="selectGoal('burnout')" id="goal-burnout" style="padding: 14px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s; font-size: 15px; font-weight: 500; color: #1a1a2e;">🧘 Avoid burnout</div>
+          <div onclick="selectGoal('productivity')" id="goal-productivity" style="padding: 14px 20px; border-radius: 10px; cursor: pointer; border: 2px solid #e8e8e8; background: white; transition: all 0.2s; font-size: 15px; font-weight: 500; color: #1a1a2e;">🚀 Boost productivity</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 32px;">
+        <button onclick="prevStep()" style="padding: 12px 24px; background: none; border: 1px solid #d0d0d0; border-radius: 8px; font-size: 14px; color: #666; cursor: pointer;">Back</button>
+        <button onclick="nextStep()" id="next-btn" style="padding: 12px 32px; background: linear-gradient(135deg, #6c5ce7, #a855f7); color: white; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 600;">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== UI NAV SCRIPT ===== -->
+  <script>
+    
+    let currentStep = 1;
+    let selectedRole = "";
+    let selectedGoal = "";
+
+    const stepTitles = [
+      "What's your name?",
+      "Your email address",
+      "Create a password",
+      "Date of birth",
+      "Are you a student?",
+      "What do you study?",
+      "Your study goal"
+    ];
+
+    function hideAll() {
+      document.getElementById("landing").style.display = "none";
+      document.getElementById("login").style.display = "none";
+      document.getElementById("signup").style.display = "none";
+    }
+
+    function showLanding() {
+      hideAll();
+      document.getElementById("landing").style.display = "flex";
+      resetLogin();
+      resetSignup();
+    }
+
+    function showLogin() {
+      hideAll();
+      document.getElementById("login").style.display = "block";
+      showLoginMethod();
+    }
+
+    function showLoginMethod() {
+      document.getElementById("login-method").style.display = "flex";
+      document.getElementById("login-loading").style.display = "none";
+      const emailLogin = document.getElementById("login-email");
+      if (emailLogin) emailLogin.style.display = "none";
+    }
+
+    function resetLogin() {
+      showLoginMethod();
+      const emailLogin = document.getElementById("login-email");
+      if (emailLogin) emailLogin.style.display = "none";
+    }
+
+    function showSignup() {
+      hideAll();
+      document.getElementById("signup").style.display = "flex";
+      document.getElementById("signup-form").style.display = "block";
+      updateStep();
+    }
+
+    function resetSignup() {
+      currentStep = 1;
+      selectedRole = "";
+      selectedGoal = "";
+      updateStep();
+      document.querySelectorAll("#signup input").forEach(i => i.value = "");
+    }
+
+    function updateStep() {
+      document.getElementById("progress-bar").style.width = ((currentStep / 7) * 100) + "%";
+      document.getElementById("step-counter").textContent = "Step " + currentStep + " of 7";
+      document.getElementById("step-title").textContent = stepTitles[currentStep - 1];
+      document.getElementById("next-btn").textContent = currentStep === 7 ? "Create Account" : "Continue";
+
+      for (let i = 1; i <= 7; i++) {
+        const el = document.getElementById("step-" + i);
+        if (el) el.style.display = i === currentStep ? (i === 5 || i === 7 ? "flex" : "block") : "none";
+      }
+    }
+
+    async function nextStep() {
+      // validation
+      if (currentStep === 1) {
+        const fn = document.getElementById("firstName").value.trim();
+        if (!fn) return alert("Please enter your first name.");
+      }
+      if (currentStep === 2) {
+        const em = document.getElementById("email").value.trim();
+        if (!em) return alert("Please enter your email.");
+      }
+      if (currentStep === 3) {
+        const pw = document.getElementById("password").value;
+        if (!pw || pw.length < 8) return alert("Password must be at least 8 characters.");
+      }
+      if (currentStep === 5) {
+        if (!selectedRole) return alert("Please select a role.");
+      }
+      if (currentStep === 7) {
+        if (!selectedGoal) return alert("Please select a goal.");
+      }
+
+      if (currentStep < 7) {
+        currentStep++;
+        updateStep();
+        return;
+      }
+
+      // create account on step 7
+      const payload = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+        dob: document.getElementById("dob").value || null,
+        role: selectedRole || null,
+        subject: document.getElementById("subject").value.trim() || null,
+        goal: selectedGoal || null,
+      };
+
+      if (!window.doSignup) {
+        alert("Signup module not loaded yet. Refresh the page.");
+        return;
+      }
+
+      try {
+        hideAll();
+        document.getElementById("login").style.display = "block";
+        document.getElementById("login-method").style.display = "none";
+        document.getElementById("login-loading").style.display = "flex";
+
+        await window.doSignup(payload);
+        // redirect handled by first-auth.js
+      } catch (e) {
+        console.error(e);
+        alert(e?.message || String(e));
+        showSignup();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStep();
+      } else {
+        showLanding();
+      }
+    }
+
+    function selectRole(role) {
+      selectedRole = role;
+      ["student", "professional", "self-learner"].forEach(r => {
+        const el = document.getElementById("role-" + r);
+        if (!el) return;
+        if (r === role) {
+          el.style.border = "2px solid #6c5ce7";
+          el.style.background = "rgba(108,92,231,0.05)";
+        } else {
+          el.style.border = "2px solid #e8e8e8";
+          el.style.background = "white";
+        }
+      });
+    }
+
+    function selectGoal(goal) {
+      selectedGoal = goal;
+      ["exams", "habits", "burnout", "productivity"].forEach(g => {
+        const el = document.getElementById("goal-" + g);
+        if (!el) return;
+        if (g === goal) {
+          el.style.border = "2px solid #6c5ce7";
+          el.style.background = "rgba(108,92,231,0.05)";
+        } else {
+          el.style.border = "2px solid #e8e8e8";
+          el.style.background = "white";
+        }
+      });
+    }
+
+    function showEmailLogin() {
+      document.getElementById("login-method").style.display = "none";
+      document.getElementById("login-loading").style.display = "none";
+
+      let emailLogin = document.getElementById("login-email");
+      if (!emailLogin) {
+        emailLogin = document.createElement("div");
+        emailLogin.id = "login-email";
+        emailLogin.style.cssText = `
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          min-height: 100vh; background: #f0f4f8; font-family: 'Segoe UI', sans-serif;
+        `;
+        emailLogin.innerHTML = `
+          <div style="background: white; border-radius: 12px; padding: 48px 40px; width: 420px; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">
+            <h2 style="margin-bottom: 24px; color: #202124;">Sign in with Email</h2>
+            <input id="emailInput" type="email" placeholder="Email" style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #dadce0;">
+            <input id="passwordInput" type="password" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 6px; border: 1px solid #dadce0;">
+
+            <button id="emailLoginBtn" style="width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 6px; cursor: pointer;">
+              Login
+            </button>
+
+            <button onclick="showLoginMethod()" style="margin-top: 16px; padding: 8px 24px; background: none; border: 1px solid #dadce0; border-radius: 4px; cursor: pointer;">Back</button>
+          </div>
+        `;
+        document.getElementById("login").appendChild(emailLogin);
+      } else {
+        emailLogin.style.display = "flex";
+      }
+
+      const btn = emailLogin.querySelector("#emailLoginBtn");
+      if (btn) btn.onclick = () => window.doEmailLogin();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateStep();
+    });
+  </script>
+
+  <!-- ===== AUTH MODULE SCRIPT (REAL FIREBASE) ===== -->
+ <script type="module">
+  import { loginWithGoogle, login, register, saveUserProfile } from "./firebase.js";
+
+  function showError(err) {
+    console.error(err);
+    alert(err?.message || String(err));
+  }
+
+  // Google login
+  document.addEventListener("DOMContentLoaded", () => {
+    const googleBtn = document.getElementById("googleBtn");
+    if (googleBtn) {
+      googleBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          document.getElementById("login-method").style.display = "none";
+          document.getElementById("login-loading").style.display = "flex";
+          await loginWithGoogle();
+          // redirect handled by first-auth.js
+        } catch (err) {
+          document.getElementById("login-loading").style.display = "none";
+          document.getElementById("login-method").style.display = "flex";
+          showError(err);
+        }
+      });
+    }
+  });
+
+  // Email login
+  window.doEmailLogin = async function () {
+    const email = document.getElementById("emailInput")?.value?.trim();
+    const password = document.getElementById("passwordInput")?.value;
+
+    if (!email || !password) return alert("Please enter email and password.");
+
+    try {
+      const emailPanel = document.getElementById("login-email");
+      if (emailPanel) emailPanel.style.display = "none";
+      document.getElementById("login-loading").style.display = "flex";
+
+      await login(email, password);
+      // redirect handled by first-auth.js
+    } catch (err) {
+      document.getElementById("login-loading").style.display = "none";
+      showEmailLogin();
+      showError(err);
+    }
+  };
+
+  // ✅ Email signup + Firestore profile
+  window.doSignup = async function (payload) {
+    const email = payload.email;
+    const password = payload.password;
+
+    const displayName = `${payload.firstName} ${payload.lastName}`.trim();
+    const user = await register(email, password, { displayName });
+
+    await saveUserProfile(user.uid, {
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: payload.email,
+      dob: payload.dob || null,
+      role: payload.role || null,
+      subject: payload.subject || null,
+      goal: payload.goal || null,
+    });
+
+    // redirect handled by first-auth.js
+  };
+</script>
+
+  <!-- ✅ IMPORTANT: only this (redirect watcher) -->
+  <script type="module" src="./first-auth.js"></script>
+</body>
+</html>
